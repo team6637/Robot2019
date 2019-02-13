@@ -7,13 +7,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class IntakeSendIt extends Command {
-
-  String liftLoad;
 
   public IntakeSendIt() {
     requires(Robot.intakeSubsystem);
@@ -21,26 +18,11 @@ public class IntakeSendIt extends Command {
 
   @Override
   protected void initialize() {
-
-    // get current load state from lift
-    liftLoad = Robot.liftSubsystem.getLoad();
-    
-    // if the lift has a hatch, eject it
-    if(liftLoad == "Hatch") {
-      Robot.intakeSubsystem.hatchEject();      
-      Timer.delay(1);
-      Robot.intakeSubsystem.hatchRetract();
-    }
-
   }
 
   @Override
   protected void execute() {
-
-    // if the lift didn't have the hatch at start, spin the ball collector out
-    if(liftLoad != "Hatch")
-      Robot.intakeSubsystem.sendIt();
-
+    Robot.intakeSubsystem.sendIt();
   }
 
   @Override

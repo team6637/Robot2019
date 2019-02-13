@@ -28,7 +28,7 @@ public class Drive extends Subsystem {
 
 	public PigeonIMU gyro;
 
-	public double turnMultiplier = 0.3;
+	public double turnMultiplier = 0.4;
 
 	public Drive(boolean tunable) {
 		

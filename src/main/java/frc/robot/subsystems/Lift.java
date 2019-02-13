@@ -29,8 +29,8 @@ public class Lift extends Subsystem {
   private double horizontalHoldOutput = 0.125;
 
   // setup predefined setpoints
-  private int bottomPosition = 0;
-  private int cargoIntakePosition = 670;
+  private int startingPosition = 0;
+  private int cargoIntakePosition = 1325;
   private int cargoBayPosition = 1969;
   private int rocketCargo1Position = 0;
   private int rocketCargo2Position = 2772;
@@ -43,7 +43,7 @@ public class Lift extends Subsystem {
   // starting position
   // lastExecutedPosition from MM, compared to targetPosition in periodicLoop() method
   // threshold: defines if arm is close enough to setpoint to be considered in proper position
-  private int targetPosition = bottomPosition;
+  private int targetPosition = startingPosition;
   private int lastExecutedPosition;
   private final static int onTargetThreshold = 100;
 
@@ -53,31 +53,19 @@ public class Lift extends Subsystem {
   private int upPositionLimit = 5200;
   private int downPositionLimit = 0;
 
-  // Load State
-  enum Load {
-    EMPTY, CARGO, HATCH
-  }
-
-  public Load currentLoad = Load.EMPTY;
-
   // PID slots
-  public final static int slot_up_empty = 0;
-  public final static int slot_up_cargo = 1;
-  public final static int slot_up_hatch = 2;
-  public final static int slot_down = 3;
+  public final static int slot_up = 0;
+  public final static int slot_down = 1;
 
   // Gains
-  Gains upEmptyGains = new Gains(3, 0, 0, 0, 150, 1);
-  Gains upCargoGains = new Gains(3, 0, 0, 0, 150, 1);
-  Gains upHatchGains = new Gains(3, 0, 0, 0, 150, 1);
-  Gains downGains = new Gains(3, 0, 0, 0, 150, 1);
+  Gains upGains = new Gains(6, 0, 0, 0, 150, 1);
+  Gains downGains = new Gains(6, 0, 0, 0, 150, 1);
 
   // Motion Parameters 
-  public int maxVelocityUp = 300;
-  public int maxAccelerationUp = 300;
-
-  public int maxVelocityDown = 300;
-  public int maxAccelerationDown = 300;
+  public int maxVelocityUp = 500;
+  public int maxAccelerationUp = 500;
+  public int maxVelocityDown = 500;
+  public int maxAccelerationDown = 500;
 
   // motors
   public WPI_TalonSRX motorMaster = new WPI_TalonSRX(RobotMap.liftMasterPort);
@@ -104,6 +92,8 @@ public class Lift extends Subsystem {
     motorSlave.setInverted(true);
     motorSlave.setNeutralMode(NeutralMode.Coast);
 
+    motorSlave.follow(motorMaster);
+
     motorMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, RobotMap.timeoutMs);
     motorMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 10, RobotMap.timeoutMs);
 		motorMaster.configNeutralDeadband(RobotMap.neutralDeadband, RobotMap.timeoutMs);
@@ -117,29 +107,13 @@ public class Lift extends Subsystem {
 		motorMaster.configMotionAcceleration(maxAccelerationUp, RobotMap.timeoutMs);
 		motorMaster.configMotionCruiseVelocity(maxVelocityUp, RobotMap.timeoutMs);
 
-    // setup a PIDF slot for going up empty
-		motorMaster.config_kP(slot_up_empty, upEmptyGains.kP, RobotMap.timeoutMs);
-		motorMaster.config_kI(slot_up_empty, upEmptyGains.kI, RobotMap.timeoutMs);
-		motorMaster.config_kD(slot_up_empty, upEmptyGains.kD, RobotMap.timeoutMs);
-		motorMaster.config_kF(slot_up_empty, upEmptyGains.kF, RobotMap.timeoutMs);
-		motorMaster.config_IntegralZone(slot_up_empty, upEmptyGains.kIZone, RobotMap.timeoutMs);
-    motorMaster.configClosedLoopPeakOutput(slot_up_empty, upEmptyGains.kPeakOutput, RobotMap.timeoutMs);
-
-    // setup a PIDF slot for going up with cargo
-		motorMaster.config_kP(slot_up_cargo, upCargoGains.kP, RobotMap.timeoutMs);
-		motorMaster.config_kI(slot_up_cargo, upCargoGains.kI, RobotMap.timeoutMs);
-		motorMaster.config_kD(slot_up_cargo, upCargoGains.kD, RobotMap.timeoutMs);
-		motorMaster.config_kF(slot_up_cargo, upCargoGains.kF, RobotMap.timeoutMs);
-		motorMaster.config_IntegralZone(slot_up_cargo, upCargoGains.kIZone, RobotMap.timeoutMs);
-    motorMaster.configClosedLoopPeakOutput(slot_up_cargo, upCargoGains.kPeakOutput, RobotMap.timeoutMs);
-
-    // setup a PIDF slot for going up with the hatch
-    motorMaster.config_kP(slot_up_hatch, upHatchGains.kP, RobotMap.timeoutMs);
-		motorMaster.config_kI(slot_up_hatch, upHatchGains.kI, RobotMap.timeoutMs);
-		motorMaster.config_kD(slot_up_hatch, upHatchGains.kD, RobotMap.timeoutMs);
-		motorMaster.config_kF(slot_up_hatch, upHatchGains.kF, RobotMap.timeoutMs);
-		motorMaster.config_IntegralZone(slot_up_hatch, upHatchGains.kIZone, RobotMap.timeoutMs);
-    motorMaster.configClosedLoopPeakOutput(slot_up_hatch, upHatchGains.kPeakOutput, RobotMap.timeoutMs);
+    // setup a PIDF slot for going up
+		motorMaster.config_kP(slot_up, upGains.kP, RobotMap.timeoutMs);
+		motorMaster.config_kI(slot_up, upGains.kI, RobotMap.timeoutMs);
+		motorMaster.config_kD(slot_up, upGains.kD, RobotMap.timeoutMs);
+		motorMaster.config_kF(slot_up, upGains.kF, RobotMap.timeoutMs);
+		motorMaster.config_IntegralZone(slot_up, upGains.kIZone, RobotMap.timeoutMs);
+    motorMaster.configClosedLoopPeakOutput(slot_up, upGains.kPeakOutput, RobotMap.timeoutMs);
 
     // setup a PIDF slot for going down
     motorMaster.config_kP(slot_down, downGains.kP, RobotMap.timeoutMs);
@@ -149,7 +123,7 @@ public class Lift extends Subsystem {
 		motorMaster.config_IntegralZone(slot_down, downGains.kIZone, RobotMap.timeoutMs);
     motorMaster.configClosedLoopPeakOutput(slot_down, downGains.kPeakOutput, RobotMap.timeoutMs);
 			
-		/**AAAAAAAAAAAAAAAAA
+		/**
 		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
 		 * - if sensor updates are too slow
@@ -157,25 +131,17 @@ public class Lift extends Subsystem {
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
 		int closedLoopTimeMs = 1;
-    motorMaster.configClosedLoopPeriod(slot_up_empty, closedLoopTimeMs, RobotMap.timeoutMs);
-    motorMaster.configClosedLoopPeriod(slot_up_cargo, closedLoopTimeMs, RobotMap.timeoutMs);
-    motorMaster.configClosedLoopPeriod(slot_up_hatch, closedLoopTimeMs, RobotMap.timeoutMs);
+    motorMaster.configClosedLoopPeriod(slot_up, closedLoopTimeMs, RobotMap.timeoutMs);
     motorMaster.configClosedLoopPeriod(slot_down, closedLoopTimeMs, RobotMap.timeoutMs);
 
     // set profile slot, this will be updated when gains need to change
-    motorMaster.selectProfileSlot(slot_up_empty, RobotMap.pidPrimary);
+    motorMaster.selectProfileSlot(slot_up, RobotMap.pidPrimary);
 
+    // set encoder and set point to starting position
     resetPosition();
-
-    setTargetPosition(getBottomPosition());
+    setTargetPosition(getStartingPosition());
 
     limitSwitch = new DigitalInput(RobotMap.liftLimitSwitchPort);
-
-    motorSlave.follow(motorMaster);
-  }
-
-  public String getLoad() {
-    return currentLoad.toString();
   }
 
   // LIMIT SWITCH
@@ -183,26 +149,14 @@ public class Lift extends Subsystem {
     return limitSwitch.get();
   }
 
-  // ENCODERS
+  // ENCODER
   public void resetPosition() {
-    motorMaster.setSelectedSensorPosition(0, 0, 10);
+    motorMaster.setSelectedSensorPosition(getStartingPosition(), 0, 10);
   }
   
   public int getPosition() {
     int pos = motorMaster.getSensorCollection().getQuadraturePosition();
     return pos;    
-  }
-
-  // return the angle of the arm based on the current encoder value
-  public double getAngle() {
-    int currentPosition = getPosition();
-
-    // divide the encoder position when arm is horizontal by the angle displacement
-    // so if you moved the arm 30 degrees and read 1000 ticks, it would be 1000/30 ticks per degree
-    // subtract horizontalAngleDisplacement to make the horizontal postion 0 degrees
-    double ticksPerDegree = horizontalPosition/horizontalAngleDisplacement;
-    double angle = currentPosition / ticksPerDegree - horizontalAngleDisplacement;
-    return angle;
   }
 
   // get velocity
@@ -224,7 +178,6 @@ public class Lift extends Subsystem {
   public void raise() {
     motorMaster.set(ControlMode.PercentOutput, .8);
   }
-
   public void lower() {
     if(limitTriggered()) {
       stop();
@@ -232,11 +185,9 @@ public class Lift extends Subsystem {
       motorMaster.set(ControlMode.PercentOutput, .4);  
     }
   }
-
   public void move(double move) {
     motorMaster.set(ControlMode.PercentOutput, move);
   }
-
   public void stop() {
     motorMaster.set(ControlMode.PercentOutput, 0);
   }
@@ -278,18 +229,7 @@ public class Lift extends Subsystem {
       motorMaster.configMotionAcceleration(maxAccelerationUp, RobotMap.timeoutMs);
       motorMaster.configMotionCruiseVelocity(maxVelocityUp, RobotMap.timeoutMs);
 
-      // check if we are loaded, set the pid gains accordingly
-      switch(currentLoad) {
-        case EMPTY :
-          motorMaster.selectProfileSlot(slot_up_empty, RobotMap.pidPrimary);
-          break;
-        case CARGO :
-          motorMaster.selectProfileSlot(slot_up_cargo, RobotMap.pidPrimary);
-          break;
-        case HATCH :
-          motorMaster.selectProfileSlot(slot_up_hatch, RobotMap.pidPrimary);
-          break;
-      }
+      motorMaster.selectProfileSlot(slot_up, RobotMap.pidPrimary);
 
     // going down
     } else {
@@ -305,8 +245,8 @@ public class Lift extends Subsystem {
   }
   
   // get the position variables
-  public int getBottomPosition() {
-    return this.bottomPosition;
+  public int getStartingPosition() {
+    return this.startingPosition;
   }
   public int getCargoIntakePosition() {
     return this.cargoIntakePosition;
@@ -361,17 +301,6 @@ public class Lift extends Subsystem {
     return(targetPosition >= downPositionLimit && targetPosition <= upPositionLimit);
   }
 
-  // set load
-  public void setCurrentLoadEmpty() {
-    this.currentLoad = Load.EMPTY;
-  }
-  public void setCurrentLoadCargo() {
-    this.currentLoad = Load.CARGO;
-  }
-  public void setCurrentLoadHatch() {
-    this.currentLoad = Load.HATCH;
-  }
-
   // check whether the manualControlStick is in position
   public boolean isInPosition(int targetPosition) {
     int currentPosition = getPosition();
@@ -379,25 +308,33 @@ public class Lift extends Subsystem {
     return positionError < onTargetThreshold;
   }
 
+   // return the angle of the arm based on the current encoder value
+   public double getAngle() {
+    int currentPosition = getPosition();
+
+    // divide the encoder position when arm is horizontal by the angle displacement
+    // so if you moved the arm 30 degrees and read 1000 ticks, it would be 1000/30 ticks per degree
+    // subtract horizontalAngleDisplacement to make the horizontal postion 0 degrees
+    double ticksPerDegree = horizontalPosition/horizontalAngleDisplacement;
+    double angle = currentPosition / ticksPerDegree - horizontalAngleDisplacement;
+    return angle;
+  }
+
   // take the horizontalHoldOutput and linearize it by multiplying it by the cos of the angle of the arm
   public double getFeedForward() {
     double radians = Math.toRadians(getAngle());
     double feedForward = horizontalHoldOutput * Math.cos(radians);
 
-    if(tunable) {
-      SmartDashboard.putNumber("Lift Angle", getAngle());
-      SmartDashboard.putNumber("Lift FeedForward", feedForward);
-    }
+    if(getAngle() < -55)
+      feedForward = 0;
+
     return feedForward;
   }
-
-  
-
 
   // to tune, call this in the initialize method of a command
   public void initializer() {
     if(tunable) {
-      SmartDashboard.putNumber("Lift Target", getBottomPosition());
+      SmartDashboard.putNumber("Lift Target", getStartingPosition());
       SmartDashboard.putNumber("Lift Position", this.getPosition());
       SmartDashboard.putNumber("Lift Velocity", this.getCurrentVelocity());
       SmartDashboard.putNumber("Lift Closed Loop Error", this.motorMaster.getClosedLoopError());
@@ -407,13 +344,14 @@ public class Lift extends Subsystem {
       SmartDashboard.putNumber("Lift Acceleration Up", maxAccelerationUp);
       SmartDashboard.putNumber("Lift Acceleration Down", maxAccelerationDown);
 
-      SmartDashboard.putNumber("Lift Up Empty kP", upEmptyGains.kP);
-
-      SmartDashboard.putNumber("Lift Up Cargo kP", upCargoGains.kP);
-      SmartDashboard.putNumber("Lift Up Hatch kP", upHatchGains.kP);
+      SmartDashboard.putNumber("Lift Up kP", upGains.kP);
       SmartDashboard.putNumber("Lift Down kP", downGains.kP);
 
       SmartDashboard.putNumber("Lift Manual Increment", manualIncrement);
+
+      SmartDashboard.putNumber("Lift Angle", getAngle());
+      SmartDashboard.putNumber("Lift Gravity Compensation", Math.cos(Math.toRadians(getAngle())));
+      SmartDashboard.putNumber("Lift FeedForward", getFeedForward());
     }
   }
 
@@ -436,17 +374,21 @@ public class Lift extends Subsystem {
     // check for manual control
     // only increment if joystick is plugged into the laptop
     double manualControlStick = Robot.oi.stick.getPOV();
-    if(Robot.oi.joystickOn() && manualControlStick == 0) {
-      incrementTargetPosition(manualIncrement);
+    if(Robot.oi.joystickIsPluggedIn() && manualControlStick == 0) {
+      incrementTargetPosition(-manualIncrement);
       changed = true;
     } else if (manualControlStick == 180) {
-      incrementTargetPosition(-manualIncrement);
+      incrementTargetPosition(manualIncrement);
       changed = true;
     }
 
     // tune from Smart Dashboard
     if(tunable) {
       SmartDashboard.putNumber("Lift Position", this.getPosition());
+      SmartDashboard.putNumber("Lift Velocity", this.getCurrentVelocity());
+      SmartDashboard.putNumber("Lift Angle", getAngle());
+      SmartDashboard.putNumber("Lift Gravity Compensation", Math.cos(Math.toRadians(getAngle())));
+      SmartDashboard.putNumber("Lift FeedForward", getFeedForward());
 
       int sdManualIncrement = (int) SmartDashboard.getNumber("Lift Manual Increment", manualIncrement);
       if(sdManualIncrement != manualIncrement) 
@@ -468,22 +410,10 @@ public class Lift extends Subsystem {
       if(sdAccelDown != maxAccelerationDown)
         this.maxAccelerationDown = sdAccelDown;
 
-      double sdUpEmptyP = SmartDashboard.getNumber("Lift Up Empty kP", upEmptyGains.kP);
-      if(sdUpEmptyP != upEmptyGains.kP) {
-        upEmptyGains.kP = sdUpEmptyP;
-        motorMaster.config_kP(slot_up_empty, upEmptyGains.kP, RobotMap.timeoutMs);
-      }
-
-      double sdUpCargoP = SmartDashboard.getNumber("Lift Up Cargo kP", upCargoGains.kP);
-      if(sdUpCargoP != upCargoGains.kP) {
-        upCargoGains.kP = sdUpCargoP;
-        motorMaster.config_kP(slot_up_cargo, upCargoGains.kP, RobotMap.timeoutMs);
-      }
-
-      double sdUpHatchP = SmartDashboard.getNumber("Lift Up Hatch kP", upHatchGains.kP);
-      if(sdUpHatchP != upHatchGains.kP) {
-        upHatchGains.kP = sdUpHatchP;
-        motorMaster.config_kP(slot_up_hatch, upHatchGains.kP, RobotMap.timeoutMs);
+      double sdUpEmptyP = SmartDashboard.getNumber("Lift Up kP", upGains.kP);
+      if(sdUpEmptyP != upGains.kP) {
+        upGains.kP = sdUpEmptyP;
+        motorMaster.config_kP(slot_up, upGains.kP, RobotMap.timeoutMs);
       }
 
       double sdDownP = SmartDashboard.getNumber("Lift Down kP", downGains.kP);
@@ -503,7 +433,5 @@ public class Lift extends Subsystem {
     if(changed) {
       this.motionMagicControl();
     }
-  
   }
-
 }

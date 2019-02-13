@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.HatchEject;
 import frc.robot.commands.IntakeBringIt;
 import frc.robot.commands.IntakeSendIt;
-import frc.robot.commands.LiftSetLoad;
 import frc.robot.commands.LiftSetPosition;
 
 public class OI {
@@ -27,14 +26,15 @@ public class OI {
 	Button intakeBringIt = new JoystickButton(stick, 2);
 	Button intakeSendIt = new JoystickButton(stick, 1);
 
-	Button hatchSendIt = new JoystickButton(stick, 5);
+	//Button hatchEject = new JoystickButton(stick, 5);
 
 
 	// setup the control panel
 	public Joystick controlPanel = new Joystick(1);
 
-	Button hatchLoadedButton = new JoystickButton(controlPanel, 9);
-	Button cargoLoadedButton = new JoystickButton(controlPanel, 10);
+	//Button hatchLoadedButton = new JoystickButton(controlPanel, 9);
+	//Button cargoLoadedButton = new JoystickButton(controlPanel, 10);
+	Button hatchEject = new JoystickButton(controlPanel, 9);
 	Button frontLifter = new JoystickButton(controlPanel, 11);
 	Button rearLifter = new JoystickButton(controlPanel, 12);
 
@@ -44,26 +44,49 @@ public class OI {
 		intakeBringIt.whileHeld(new IntakeBringIt());
 		intakeSendIt.whileHeld(new IntakeSendIt());
 
-		
+		// setup variables to hold the preset lift positions
+		int liftStartingPosition = Robot.liftSubsystem.getStartingPosition();
+		int liftCargoIntakePosition = Robot.liftSubsystem.getCargoIntakePosition();
+		int liftRocketCargo1Position = Robot.liftSubsystem.getRocketCargo1Position();
+		int liftRocketCargo2Position = Robot.liftSubsystem.getRocketCargo2Position();
+		int liftRocketCargo3Position = Robot.liftSubsystem.getRocketCargo3Position();
+		int liftRocketHatch1Position = Robot.liftSubsystem.getRocketHatch1Position();
+		int liftRocketHatch2Position = Robot.liftSubsystem.getRocketHatch2Position();
+		int liftRocketHatch3Position = Robot.liftSubsystem.getRocketHatch3Position();
 
-		rocketCargo1.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getRocketCargo1Position(), Robot.wristSubsystem.getRocketCargo1Position()));
-		rocketCargo2.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getRocketCargo2Position(), Robot.wristSubsystem.getRocketCargo2Position()));	
-		rocketCargo3.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getRocketCargo3Position(), Robot.wristSubsystem.getRocketCargo3Position()));
-		rocketHatch1.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getRocketHatch1Position(), Robot.wristSubsystem.getRocketHatch1Position()));
-		rocketHatch2.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getRocketHatch2Position(), Robot.wristSubsystem.getRocketHatch2Position()));
-		rocketHatch3.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getRocketHatch3Position(), Robot.wristSubsystem.getRocketHatch3Position()));
+		// setup variables to hold the preset wrist positions
+		int wristStartingPosition = Robot.wristSubsystem.getStartingPosition();
+		int wristCargoIntakePosition = Robot.wristSubsystem.getCargoIntakePosition();
+		int wristRocketCargo1Position = Robot.wristSubsystem.getRocketCargo1Position();
+		int wristRocketCargo2Position = Robot.wristSubsystem.getRocketCargo2Position();
+		int wristRocketCargo3Position = Robot.wristSubsystem.getRocketCargo3Position();
+		int wristRocketHatch1Position = Robot.wristSubsystem.getRocketHatch1Position();
+		int wristRocketHatch2Position = Robot.wristSubsystem.getRocketHatch2Position();
+		int wristRocketHatch3Position = Robot.wristSubsystem.getRocketHatch3Position();
 
-		cargoIntakePosition.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getCargoIntakePosition(), Robot.wristSubsystem.getCargoIntakePosition()));
-		homePosition.whenPressed(new LiftSetPosition(Robot.liftSubsystem.getBottomPosition(), Robot.wristSubsystem.getstartingPosition()));
-	
-		hatchSendIt.whenPressed(new HatchEject());
+		// pass the position variables on the 6 side buttons to the LiftSetPosition Command
+		rocketCargo1.whenPressed(new LiftSetPosition(liftRocketCargo1Position, wristRocketCargo1Position));
+		rocketCargo2.whenPressed(new LiftSetPosition(liftRocketCargo2Position, wristRocketCargo2Position));	
+		rocketCargo3.whenPressed(new LiftSetPosition(liftRocketCargo3Position, wristRocketCargo3Position));
+		rocketHatch1.whenPressed(new LiftSetPosition(liftRocketHatch1Position, wristRocketHatch1Position));
+		rocketHatch2.whenPressed(new LiftSetPosition(liftRocketHatch2Position, wristRocketHatch2Position));
+		rocketHatch3.whenPressed(new LiftSetPosition(liftRocketHatch3Position, wristRocketHatch3Position));
+
+		// set the buttons at the top of the joystick to intake and home positions
+		cargoIntakePosition.whenPressed(new LiftSetPosition(liftCargoIntakePosition, wristCargoIntakePosition));
+		homePosition.whenPressed(new LiftSetPosition(liftStartingPosition, wristStartingPosition));
 
 		// control panel
-		cargoLoadedButton.whenPressed(new LiftSetLoad("Cargo"));
-		hatchLoadedButton.whenPressed(new LiftSetLoad("Hatch"));
+		hatchEject.whenPressed(new HatchEject());
+
+		//cargoLoadedButton.whenPressed(new LiftSetLoad("Cargo"));
+		//hatchLoadedButton.whenPressed(new LiftSetLoad("Hatch"));
 	}
 
-	public boolean joystickOn() {
+	// check if joystick is plugged in
+	// if throttle reads a value then we can assume joystick is plugged in
+	// if it's plugged in and reads 0 exactly, then we are just unlucky that day
+	public boolean joystickIsPluggedIn() {
 		return stick.getThrottle() != 0;
 	}
 }

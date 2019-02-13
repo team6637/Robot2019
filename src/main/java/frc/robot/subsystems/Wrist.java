@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.WristMM;
-import frc.robot.subsystems.Lift.Load;
+import frc.robot.commands.WristManual;
 import frc.robot.util.Gains;
 
 
@@ -29,16 +29,16 @@ public class Wrist extends Subsystem {
   private double horizontalAngleDisplacement = 68;
 
   // what is the least output required to hold the arm up in the horizontal position
-  private double  horizontalHoldOutput = 0.125;
+  private double  horizontalHoldOutput = 0.03;
 
   // setup predefined setpoints
   private int startingPosition = 2000;
-  private int cargoIntakePosition = 488;
+  private int cargoIntakePosition = 230;
   private int cargoBayPosition = 1000;
   private int rocketCargo1Position = 1135;
   private int rocketCargo2Position = 690;
   private int rocketCargo3Position = 515;
-  private int rocketHatch1Position = 1800;
+  private int rocketHatch1Position = 1400;
   private int rocketHatch2Position = 1250;
   private int rocketHatch3Position = 360;
 
@@ -46,29 +46,25 @@ public class Wrist extends Subsystem {
   private int lastExecutedPosition;
   private final static int onTargetThreshold = 100;
 
-  private int manualIncrement = 15;
+  private int manualIncrement = 5;
 
   // define soft limits
   private int upPositionLimit = 2000;
   private int downPositionLimit = 0;
 
   // PID slots
-  public final static int slot_up_empty = 0;
-  public final static int slot_up_cargo = 1;
-  public final static int slot_up_hatch = 2;
-  public final static int slot_down = 3;
+  public final static int slot_up = 0;
+  public final static int slot_down = 1;
 
   // Gains
-  Gains upEmptyGains = new Gains(2.5, 0, 0, 0, 150, 1);
-  Gains upCargoGains = new Gains(2.5, 0, 0, 0, 150, 1);
-  Gains upHatchGains = new Gains(2.5, 0, 0, 0, 150, 1);
-  Gains downGains = new Gains(2.5, 0, 0, 0, 150, 1);
+  Gains upGains = new Gains(3, 0, 0, 0, 150, 1);
+  Gains downGains = new Gains(3, 0, 0, 0, 150, 1);
 
   // Motion Parameters 
-  public int maxVelocityUp = 600;
-  public int maxAccelerationUp = 600;
-  public int maxVelocityDown = 600;
-  public int maxAccelerationDown = 600;
+  public int maxVelocityUp = 300;
+  public int maxAccelerationUp = 300;
+  public int maxVelocityDown = 300;
+  public int maxAccelerationDown = 300;
 
   public WPI_TalonSRX motor = new WPI_TalonSRX(RobotMap.wristMotorPort);
 
@@ -95,32 +91,16 @@ public class Wrist extends Subsystem {
     motor.configPeakOutputReverse(-1.0, RobotMap.timeoutMs);
     
     // set speeds
-    motor.configMotionAcceleration(maxAccelerationUp, RobotMap.timeoutMs);
-    motor.configMotionCruiseVelocity(maxVelocityUp, RobotMap.timeoutMs);
+    motor.configMotionAcceleration(maxAccelerationDown, RobotMap.timeoutMs);
+    motor.configMotionCruiseVelocity(maxVelocityDown, RobotMap.timeoutMs);
     
-    // setup a PIDF slot for going up empty
-    motor.config_kP(slot_up_empty, upEmptyGains.kP, RobotMap.timeoutMs);
-    motor.config_kI(slot_up_empty, upEmptyGains.kI, RobotMap.timeoutMs);
-    motor.config_kD(slot_up_empty, upEmptyGains.kD, RobotMap.timeoutMs);
-    motor.config_kF(slot_up_empty, upEmptyGains.kF, RobotMap.timeoutMs);
-    motor.config_IntegralZone(slot_up_empty, upEmptyGains.kIZone, RobotMap.timeoutMs);
-    motor.configClosedLoopPeakOutput(slot_up_empty, upEmptyGains.kPeakOutput, RobotMap.timeoutMs);
-    
-    // setup a PIDF slot for going up with cargo
-    motor.config_kP(slot_up_cargo, upCargoGains.kP, RobotMap.timeoutMs);
-    motor.config_kI(slot_up_cargo, upCargoGains.kI, RobotMap.timeoutMs);
-    motor.config_kD(slot_up_cargo, upCargoGains.kD, RobotMap.timeoutMs);
-    motor.config_kF(slot_up_cargo, upCargoGains.kF, RobotMap.timeoutMs);
-    motor.config_IntegralZone(slot_up_cargo, upCargoGains.kIZone, RobotMap.timeoutMs);
-    motor.configClosedLoopPeakOutput(slot_up_cargo, upCargoGains.kPeakOutput, RobotMap.timeoutMs);
-    
-    // setup a PIDF slot for going up with the hatch
-    motor.config_kP(slot_up_hatch, upHatchGains.kP, RobotMap.timeoutMs);
-    motor.config_kI(slot_up_hatch, upHatchGains.kI, RobotMap.timeoutMs);
-    motor.config_kD(slot_up_hatch, upHatchGains.kD, RobotMap.timeoutMs);
-    motor.config_kF(slot_up_hatch, upHatchGains.kF, RobotMap.timeoutMs);
-    motor.config_IntegralZone(slot_up_hatch, upHatchGains.kIZone, RobotMap.timeoutMs);
-    motor.configClosedLoopPeakOutput(slot_up_hatch, upHatchGains.kPeakOutput, RobotMap.timeoutMs);
+    // setup a PIDF slot for going up
+    motor.config_kP(slot_up, upGains.kP, RobotMap.timeoutMs);
+    motor.config_kI(slot_up, upGains.kI, RobotMap.timeoutMs);
+    motor.config_kD(slot_up, upGains.kD, RobotMap.timeoutMs);
+    motor.config_kF(slot_up, upGains.kF, RobotMap.timeoutMs);
+    motor.config_IntegralZone(slot_up, upGains.kIZone, RobotMap.timeoutMs);
+    motor.configClosedLoopPeakOutput(slot_up, upGains.kPeakOutput, RobotMap.timeoutMs);
     
     // setup a PIDF slot for going down
     motor.config_kP(slot_down, downGains.kP, RobotMap.timeoutMs);
@@ -131,14 +111,15 @@ public class Wrist extends Subsystem {
     motor.configClosedLoopPeakOutput(slot_down, downGains.kPeakOutput, RobotMap.timeoutMs);
     
     int closedLoopTimeMs = 1;
-    motor.configClosedLoopPeriod(slot_up_empty, closedLoopTimeMs, RobotMap.timeoutMs);
-    motor.configClosedLoopPeriod(slot_up_cargo, closedLoopTimeMs, RobotMap.timeoutMs);
-    motor.configClosedLoopPeriod(slot_up_hatch, closedLoopTimeMs, RobotMap.timeoutMs);
+    motor.configClosedLoopPeriod(slot_up, closedLoopTimeMs, RobotMap.timeoutMs);
     motor.configClosedLoopPeriod(slot_down, closedLoopTimeMs, RobotMap.timeoutMs);
     
     // set profile slot, this will be updated when gains need to change
-    motor.selectProfileSlot(slot_up_empty, RobotMap.pidPrimary);
+    motor.selectProfileSlot(slot_down, RobotMap.pidPrimary);
+
+    // set encoder and set point to starting position
     resetPosition();
+    setTargetPosition(getStartingPosition());
 
     limitSwitch = new DigitalInput(RobotMap.wristLimitSwitchPort);
   }
@@ -148,31 +129,13 @@ public class Wrist extends Subsystem {
     return limitSwitch.get();
   }
 
+  // ENCODER
   public int getPosition() {
     return motor.getSelectedSensorPosition();
   }
 
   public void resetPosition() {
     motor.setSelectedSensorPosition(2000, 0, 10);
-  }
-
-  // return the angle of the arm based on the current encoder value
-  public double getAngle() {
-    int currentPosition = getPosition();
-
-    // divide the encoder position when arm is horizontal by the angle displacement
-    // so if you moved the arm 30 degrees and read 1000 ticks, it would be 1000/30 ticks per degree
-    // subtract horizontalAngleDisplacement to make the horizontal postion 0 degrees
-    double ticksPerDegree = horizontalOffset/horizontalAngleDisplacement;
-    double relativeAngle = (currentPosition - horizontalOffset) / ticksPerDegree;
-    double absoluteAngle = relativeAngle + Robot.liftSubsystem.getAngle();
-
-    if(tunable) {
-      SmartDashboard.putNumber("Wrist Relative Angle", relativeAngle);
-      SmartDashboard.putNumber("Wrist Absolute Angle", absoluteAngle);
-    }
-      
-    return absoluteAngle;
   }
   
   // get velocity
@@ -188,7 +151,13 @@ public class Wrist extends Subsystem {
 
   // MANUAL CONTROL
   public void raise() {
-    motor.set(ControlMode.PercentOutput, 1);
+
+    // limit isn't working just yet
+    // if(limitTriggered()) {
+    //   stop();
+    // } else {
+      motor.set(ControlMode.PercentOutput, 1);
+    //}
   }
   public void lower() {
     motor.set(ControlMode.PercentOutput, -1);
@@ -216,8 +185,7 @@ public class Wrist extends Subsystem {
     manageMotion(targetPosition);
 
     // Percent to add to Closed Loop Output
-    //double feedForward = getFeedForward();
-    double feedForward = 0;
+    double feedForward = getFeedForward();
 
     // Do It!!!
 		motor.set(ControlMode.MotionMagic, targetPosition, DemandType.ArbitraryFeedForward, feedForward);
@@ -237,19 +205,8 @@ public class Wrist extends Subsystem {
       motor.configMotionAcceleration(maxAccelerationUp, RobotMap.timeoutMs);
       motor.configMotionCruiseVelocity(maxVelocityUp, RobotMap.timeoutMs);
 
-      // check if we are loaded, set the pid gains accordingly
-      Load currentLoad = Robot.liftSubsystem.currentLoad;
-      switch(currentLoad) {
-        case EMPTY :
-          motor.selectProfileSlot(slot_up_empty, RobotMap.pidPrimary);
-          break;
-        case CARGO :
-          motor.selectProfileSlot(slot_up_cargo, RobotMap.pidPrimary);
-          break;
-        case HATCH :
-          motor.selectProfileSlot(slot_up_hatch, RobotMap.pidPrimary);
-          break;
-      }
+      // select the up gains
+      motor.selectProfileSlot(slot_up, RobotMap.pidPrimary);
 
     } else {
       
@@ -263,7 +220,7 @@ public class Wrist extends Subsystem {
 
   }
 
-  public int getstartingPosition() {
+  public int getStartingPosition() {
     return this.startingPosition;
   }
   public int getCargoIntakePosition() {
@@ -325,23 +282,46 @@ public class Wrist extends Subsystem {
     return positionError < onTargetThreshold;
   }
 
+  // return the angle of the wrist relative to the lift based on the current encoder value
+  public double getRelativeAngle () {
+    int currentPosition = getPosition();
+
+    // divide the encoder position when arm is horizontal by the angle displacement
+    // so if you moved the arm 30 degrees and read 1000 ticks, it would be 1000/30 ticks per degree
+    double ticksPerDegree = horizontalOffset/horizontalAngleDisplacement;
+    double relativeAngle = (currentPosition - horizontalOffset) / ticksPerDegree;
+    return relativeAngle;
+  }
+
+  // absolute angle (angle in relation to the floor)
+  public double getAngle() {
+    double relativeAngle = getRelativeAngle();
+    double absoluteAngle = relativeAngle + Robot.liftSubsystem.getAngle();
+    return absoluteAngle;
+  }
+  
   // take the horizontalHoldOutput and linearize it by multiplying it by the cos of the angle of the arm
   public double getFeedForward() {
     double radians = Math.toRadians(getAngle());
     double feedForward = horizontalHoldOutput * Math.cos(radians);
 
-    if(tunable) {
-      SmartDashboard.putNumber("Wrist FeedForward", feedForward);
-      SmartDashboard.putNumber("Wrist Radians", radians);
-      SmartDashboard.putNumber("Wrist Cos", Math.cos(radians));
-    }
+    // set feedforward to 0 in home position so we aren't giving the motor voltage when it's just sitting there
+    if(getRelativeAngle() > 115)
+      feedForward = 0;
+
+    // temporarily disable feed forward until PID is tuned
+    feedForward = 0;
+    
     return feedForward;
   }
 
   public void initializer() {
 
+    resetPosition();
+    setTargetPosition(getStartingPosition());
+
     if(tunable) {
-      SmartDashboard.putNumber("Wrist Target", targetPosition);
+      SmartDashboard.putNumber("Wrist Target", getStartingPosition());
       SmartDashboard.putNumber("Wrist Position", this.getPosition());
       SmartDashboard.putNumber("Wrist Velocity", this.getCurrentVelocity());
       SmartDashboard.putNumber("Wrist Closed Loop Error", this.motor.getClosedLoopError());
@@ -351,10 +331,7 @@ public class Wrist extends Subsystem {
       SmartDashboard.putNumber("Wrist Acceleration Up", maxAccelerationUp);
       SmartDashboard.putNumber("Wrist Acceleration Down", maxAccelerationDown);
 
-      SmartDashboard.putNumber("Wrist Up Empty kP", upEmptyGains.kP);
-
-      SmartDashboard.putNumber("Wrist Up Cargo kP", upCargoGains.kP);
-      SmartDashboard.putNumber("Wrist Up Hatch kP", upHatchGains.kP);
+      SmartDashboard.putNumber("Wrist Up kP", upGains.kP);
       SmartDashboard.putNumber("Wrist Down kP", downGains.kP);
 
       SmartDashboard.putNumber("Wrist Manual Increment", manualIncrement);
@@ -381,20 +358,22 @@ public class Wrist extends Subsystem {
 
     // tune from Smart Dashboard
     if(tunable) {
-
       SmartDashboard.putNumber("Wrist Position", this.getPosition());
-
-      SmartDashboard.putBoolean("Limit Test",  limitTriggered());
+      SmartDashboard.putNumber("Wrist Velocity", this.getCurrentVelocity());
+      SmartDashboard.putBoolean("Wrist Limit Test",  limitTriggered());
+      SmartDashboard.putNumber("Wrist Relative Angle", getRelativeAngle());
+      SmartDashboard.putNumber("Wrist Absolute Angle", getAngle());
+      SmartDashboard.putNumber("Wrist FeedForward", getFeedForward());
 
       // if limit switch is triggered, reset to starting position
       if(limitTriggered()) {
-        resetPosition();
+        // disable limit switch temporarily
+        //resetPosition();
       }    
   
       int sdManualIncrement = (int) SmartDashboard.getNumber("Wrist Manual Increment", manualIncrement);
       if(sdManualIncrement != manualIncrement) 
         manualIncrement = sdManualIncrement;
-
 
       int sdVelUp = (int) SmartDashboard.getNumber("Wrist Velocity Up", maxVelocityUp);
       if(sdVelUp != maxVelocityUp) 
@@ -412,23 +391,11 @@ public class Wrist extends Subsystem {
       if(sdAccelDown != maxAccelerationDown)
         this.maxAccelerationDown = sdAccelDown;
 
-      double sdUpEmptyP = SmartDashboard.getNumber("Wrist Up Empty kP", upEmptyGains.kP);
-      if(sdUpEmptyP != upEmptyGains.kP) {
-        upEmptyGains.kP = sdUpEmptyP;
-        motor.config_kP(slot_up_empty, upEmptyGains.kP, RobotMap.timeoutMs);
+      double sdUpEmptyP = SmartDashboard.getNumber("Wrist Up kP", upGains.kP);
+      if(sdUpEmptyP != upGains.kP) {
+        upGains.kP = sdUpEmptyP;
+        motor.config_kP(slot_up, upGains.kP, RobotMap.timeoutMs);
         changed = true;
-      }
-
-      double sdUpCargoP = SmartDashboard.getNumber("Wrist Up Cargo kP", upCargoGains.kP);
-      if(sdUpCargoP != upCargoGains.kP) {
-        upCargoGains.kP = sdUpCargoP;
-        motor.config_kP(slot_up_cargo, upCargoGains.kP, RobotMap.timeoutMs);
-      }
-
-      double sdUpHatchP = SmartDashboard.getNumber("Wrist Up Hatch kP", upHatchGains.kP);
-      if(sdUpHatchP != upHatchGains.kP) {
-        upHatchGains.kP = sdUpHatchP;
-        motor.config_kP(slot_up_hatch, upHatchGains.kP, RobotMap.timeoutMs);
       }
 
       double sdDownP = SmartDashboard.getNumber("Wrist Down kP", downGains.kP);
