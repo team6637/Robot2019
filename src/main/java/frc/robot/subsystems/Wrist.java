@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.WristMM;
-import frc.robot.commands.WristManual;
 import frc.robot.util.Gains;
 
 
@@ -391,9 +390,9 @@ public class Wrist extends Subsystem {
       if(sdAccelDown != maxAccelerationDown)
         this.maxAccelerationDown = sdAccelDown;
 
-      double sdUpEmptyP = SmartDashboard.getNumber("Wrist Up kP", upGains.kP);
-      if(sdUpEmptyP != upGains.kP) {
-        upGains.kP = sdUpEmptyP;
+      double sdUpP = SmartDashboard.getNumber("Wrist Up kP", upGains.kP);
+      if(sdUpP != upGains.kP) {
+        upGains.kP = sdUpP;
         motor.config_kP(slot_up, upGains.kP, RobotMap.timeoutMs);
         changed = true;
       }

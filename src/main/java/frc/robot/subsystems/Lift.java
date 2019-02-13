@@ -410,9 +410,9 @@ public class Lift extends Subsystem {
       if(sdAccelDown != maxAccelerationDown)
         this.maxAccelerationDown = sdAccelDown;
 
-      double sdUpEmptyP = SmartDashboard.getNumber("Lift Up kP", upGains.kP);
-      if(sdUpEmptyP != upGains.kP) {
-        upGains.kP = sdUpEmptyP;
+      double sdUpP = SmartDashboard.getNumber("Lift Up kP", upGains.kP);
+      if(sdUpP != upGains.kP) {
+        upGains.kP = sdUpP;
         motorMaster.config_kP(slot_up, upGains.kP, RobotMap.timeoutMs);
       }
 
