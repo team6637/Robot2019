@@ -3,10 +3,7 @@ package frc.robot.util;
  *  Class that organizes gains used when assigning values to slots
  */
 public class Gains {
-	public double kP;
-	public double kI;
-	public double kD;
-	public double kF;
+	public double kP, kI, kD, kF;
 	public int kIZone;
 	public double kPeakOutput;
 	

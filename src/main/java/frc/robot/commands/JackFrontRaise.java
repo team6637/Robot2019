@@ -3,19 +3,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class Shift extends Command {
-  public Shift() {
-    requires(Robot.shifterSubsystem);
+public class JackFrontRaise extends Command {
+  public JackFrontRaise() {
+    requires(Robot.jackSubsystem);
   }
 
   @Override
   protected void initialize() {
-    Robot.shifterSubsystem.shiftLow();
+    Robot.jackSubsystem.frontRaise();
   }
 
   @Override
   protected void execute() {
-    Robot.shifterSubsystem.periodicLoop();
   }
 
   @Override

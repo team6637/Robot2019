@@ -32,20 +32,20 @@ public class Wrist extends Subsystem {
 
   // setup predefined setpoints
   private int startingPosition = 2000;
-  private int cargoIntakePosition = 230;
+  private int cargoIntakePosition = 0;
   private int cargoBayPosition = 1000;
-  private int rocketCargo1Position = 1135;
-  private int rocketCargo2Position = 690;
-  private int rocketCargo3Position = 515;
-  private int rocketHatch1Position = 1400;
-  private int rocketHatch2Position = 1250;
-  private int rocketHatch3Position = 360;
+  private int rocketCargo1Position = 1330;
+  private int rocketCargo2Position = 834;
+  private int rocketCargo3Position = 600;
+  private int rocketHatch1Position = 1518;
+  private int rocketHatch2Position = 1057;
+  private int rocketHatch3Position = 340;
 
   private int targetPosition = startingPosition;
   private int lastExecutedPosition;
   private final static int onTargetThreshold = 100;
 
-  private int manualIncrement = 5;
+  private int manualIncrement = 8;
 
   // define soft limits
   private int upPositionLimit = 2000;
@@ -348,10 +348,10 @@ public class Wrist extends Subsystem {
     // check for manual control
     double manualControlStick = Robot.oi.controlPanel.getX();
     if(manualControlStick == 1) {
-      incrementTargetPosition(manualIncrement);
+      incrementTargetPosition(-manualIncrement);
       changed = true;
     } else if (manualControlStick == -1) {
-      incrementTargetPosition(-manualIncrement);
+      incrementTargetPosition(manualIncrement);
       changed = true;
     }
 

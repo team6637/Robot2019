@@ -30,14 +30,14 @@ public class Lift extends Subsystem {
 
   // setup predefined setpoints
   private int startingPosition = 0;
-  private int cargoIntakePosition = 1325;
+  private int cargoIntakePosition = 1680;
   private int cargoBayPosition = 1969;
   private int rocketCargo1Position = 0;
-  private int rocketCargo2Position = 2772;
+  private int rocketCargo2Position = 2760;
   private int rocketCargo3Position = 4500;
   private int rocketHatch1Position = 0;
   private int rocketHatch2Position = 2638;
-  private int rocketHatch3Position = 4950;
+  private int rocketHatch3Position = 5167;
   
 
   // starting position
@@ -58,14 +58,14 @@ public class Lift extends Subsystem {
   public final static int slot_down = 1;
 
   // Gains
-  Gains upGains = new Gains(6, 0, 0, 0, 150, 1);
-  Gains downGains = new Gains(6, 0, 0, 0, 150, 1);
+  Gains upGains = new Gains(5, 0, 0, 0, 150, 1);
+  Gains downGains = new Gains(5, 0, 0, 0, 150, 1);
 
   // Motion Parameters 
-  public int maxVelocityUp = 500;
-  public int maxAccelerationUp = 500;
-  public int maxVelocityDown = 500;
-  public int maxAccelerationDown = 500;
+  public int maxVelocityUp = 400;
+  public int maxAccelerationUp = 400;
+  public int maxVelocityDown = 400;
+  public int maxAccelerationDown = 400;
 
   // motors
   public WPI_TalonSRX motorMaster = new WPI_TalonSRX(RobotMap.liftMasterPort);
@@ -375,10 +375,10 @@ public class Lift extends Subsystem {
     // only increment if joystick is plugged into the laptop
     double manualControlStick = Robot.oi.stick.getPOV();
     if(Robot.oi.joystickIsPluggedIn() && manualControlStick == 0) {
-      incrementTargetPosition(-manualIncrement);
+      incrementTargetPosition(manualIncrement);
       changed = true;
     } else if (manualControlStick == 180) {
-      incrementTargetPosition(manualIncrement);
+      incrementTargetPosition(-manualIncrement);
       changed = true;
     }
 

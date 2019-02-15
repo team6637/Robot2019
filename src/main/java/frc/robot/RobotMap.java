@@ -35,6 +35,10 @@ public class RobotMap {
   public static int shifterSolenoidHigh = 1;
   public static int intakeSolenoidLow = 2;
   public static int intakeSolenoidHigh = 3;
+  public static int jackFrontLow = 4;
+  public static int jackFrontHigh = 5;
+  public static int jackRearLow = 6;
+  public static int jackRearHigh = 7;
   
   // USB
   public static int joystickPort = 0;

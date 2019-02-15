@@ -38,7 +38,7 @@ public class Shifter extends Subsystem {
 	}
 	
 	// this is called repeatedly from execute() in a command
-	public void periodic() {
+	public void periodicLoop() {
 		shiftSlider = -Robot.oi.stick.getThrottle();
 		if(shiftSlider > 0 && state == State.LOW) {
 			shiftHigh();

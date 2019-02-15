@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.HatchEject;
 import frc.robot.commands.IntakeBringIt;
 import frc.robot.commands.IntakeSendIt;
+import frc.robot.commands.JackFrontLower;
+import frc.robot.commands.JackFrontRaise;
 import frc.robot.commands.LiftSetPosition;
 
 public class OI {
@@ -20,23 +22,18 @@ public class OI {
 	Button rocketHatch2 = new JoystickButton(stick, 10);
 	Button rocketHatch3 = new JoystickButton(stick, 8);
 
-	Button cargoIntakePosition = new JoystickButton(stick, 3);
-	Button homePosition = new JoystickButton(stick, 4);
+	Button cargoIntakePosition = new JoystickButton(stick, 4);
+	Button homePosition = new JoystickButton(stick, 3);
 
 	Button intakeBringIt = new JoystickButton(stick, 2);
 	Button intakeSendIt = new JoystickButton(stick, 1);
 
-	//Button hatchEject = new JoystickButton(stick, 5);
-
-
 	// setup the control panel
 	public Joystick controlPanel = new Joystick(1);
 
-	//Button hatchLoadedButton = new JoystickButton(controlPanel, 9);
-	//Button cargoLoadedButton = new JoystickButton(controlPanel, 10);
 	Button hatchEject = new JoystickButton(controlPanel, 9);
-	Button frontLifter = new JoystickButton(controlPanel, 11);
-	Button rearLifter = new JoystickButton(controlPanel, 12);
+	Button frontJackRaise = new JoystickButton(controlPanel, 11);
+	Button frontJackLower = new JoystickButton(controlPanel, 12);
 
 	
 	public OI() {
@@ -78,9 +75,9 @@ public class OI {
 
 		// control panel
 		hatchEject.whenPressed(new HatchEject());
+		frontJackRaise.whenPressed(new JackFrontRaise());
+		frontJackLower.whenPressed(new JackFrontLower());
 
-		//cargoLoadedButton.whenPressed(new LiftSetLoad("Cargo"));
-		//hatchLoadedButton.whenPressed(new LiftSetLoad("Hatch"));
 	}
 
 	// check if joystick is plugged in
