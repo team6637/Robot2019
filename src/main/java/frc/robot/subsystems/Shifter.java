@@ -24,12 +24,12 @@ public class Shifter extends Subsystem {
 	public DoubleSolenoid solenoid = new DoubleSolenoid(RobotMap.shifterSolenoidLow, RobotMap.shifterSolenoidHigh);
 	
 	public void shiftLow() {
-		solenoid.set(DoubleSolenoid.Value.kReverse);
+		solenoid.set(DoubleSolenoid.Value.kForward);
 		state = State.LOW;
 	}
 	
 	public void shiftHigh() {
-		solenoid.set(DoubleSolenoid.Value.kForward);
+		solenoid.set(DoubleSolenoid.Value.kReverse);
 		state = State.HIGH;
 	}
 

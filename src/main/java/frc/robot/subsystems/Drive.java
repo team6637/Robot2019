@@ -19,7 +19,7 @@ public class Drive extends Subsystem {
 	public WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(RobotMap.rightSlave1Port);
 	public WPI_TalonSRX rightSlave2 = new WPI_TalonSRX(RobotMap.rightSlave2Port);
 
-	public DifferentialDrive drive = new DifferentialDrive(leftMaster, rightMaster);
+	public DifferentialDrive drive;
 
 	public double turnMultiplier = 0.4;
 
@@ -61,18 +61,23 @@ public class Drive extends Subsystem {
 		rightSlave2.follow(rightMaster);
 		
 		// SAFETY
-		drive.setSafetyEnabled(false);
-		leftMaster.setSafetyEnabled(false);
-		leftSlave1.setSafetyEnabled(false);
-		leftSlave2.setSafetyEnabled(false);
-		rightMaster.setSafetyEnabled(false);
-		rightSlave1.setSafetyEnabled(false);
-		rightSlave2.setSafetyEnabled(false);
+		// drive.setSafetyEnabled(false);
+		// leftMaster.setSafetyEnabled(false);
+		// leftSlave1.setSafetyEnabled(false);
+		// leftSlave2.setSafetyEnabled(false);
+		// rightMaster.setSafetyEnabled(false);
+		// rightSlave1.setSafetyEnabled(false);
+		// rightSlave2.setSafetyEnabled(false);
 
 	}
 	
 	// DRIVE THE MOTORS
 	public void manualDrive(double move, double turn) {
+
+		if(Math.abs(move) < .1) {
+			move = 0;
+		}
+
     	turn = turn * turnMultiplier;
 		drive.arcadeDrive(move, turn, false);
 	}

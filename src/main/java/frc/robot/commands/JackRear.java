@@ -3,20 +3,20 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class JackFront extends Command {
+public class JackRear extends Command {
 
   public static boolean jacked = false;
 
-  public JackFront() {
+  public JackRear() {
     requires(Robot.jackSubsystem);
   }
 
   @Override
-  protected void initialize() {    
+  protected void initialize() {
     if(jacked) {
-      Robot.jackSubsystem.frontLower();
+      Robot.jackSubsystem.rearLower();
     } else {
-      Robot.jackSubsystem.frontRaise();
+      Robot.jackSubsystem.rearRaise();
     }
     jacked = !jacked;
   }

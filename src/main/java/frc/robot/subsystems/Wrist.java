@@ -255,8 +255,7 @@ public class Wrist extends Subsystem {
     if(isPositionValid(targetPosition)) {
       this.targetPosition = targetPosition;
 
-      if(tunable)
-        SmartDashboard.putNumber("Wrist Target", targetPosition);
+      SmartDashboard.putNumber("Wrist Target", targetPosition);
 
       return true;
     } else {
@@ -341,6 +340,8 @@ public class Wrist extends Subsystem {
   public void periodicLoop() {
     boolean changed = false;
 
+    SmartDashboard.putNumber("Wrist Position", this.getPosition());
+
     // if targetPosition has changed since MM was last called, call MM again
     if(lastExecutedPosition != targetPosition)
       changed = true;
@@ -357,7 +358,6 @@ public class Wrist extends Subsystem {
 
     // tune from Smart Dashboard
     if(tunable) {
-      SmartDashboard.putNumber("Wrist Position", this.getPosition());
       SmartDashboard.putNumber("Wrist Velocity", this.getCurrentVelocity());
       SmartDashboard.putBoolean("Wrist Limit Test",  limitTriggered());
       SmartDashboard.putNumber("Wrist Relative Angle", getRelativeAngle());

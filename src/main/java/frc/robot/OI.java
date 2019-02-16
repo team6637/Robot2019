@@ -3,11 +3,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.RobotState.State;
 import frc.robot.commands.HatchEject;
 import frc.robot.commands.IntakeBringIt;
 import frc.robot.commands.IntakeSendIt;
-import frc.robot.commands.JackFrontLower;
-import frc.robot.commands.JackFrontRaise;
+import frc.robot.commands.JackFront;
+import frc.robot.commands.JackRear;
 import frc.robot.commands.LiftSetPosition;
 
 public class OI {
@@ -32,51 +33,30 @@ public class OI {
 	public Joystick controlPanel = new Joystick(1);
 
 	Button hatchEject = new JoystickButton(controlPanel, 9);
-	Button frontJackRaise = new JoystickButton(controlPanel, 11);
-	Button frontJackLower = new JoystickButton(controlPanel, 12);
+	Button frontJack = new JoystickButton(controlPanel, 11);
+	Button rearJack = new JoystickButton(controlPanel, 12);
 
-	
 	public OI() {
 		// joystick
 		intakeBringIt.whileHeld(new IntakeBringIt());
 		intakeSendIt.whileHeld(new IntakeSendIt());
 
-		// setup variables to hold the preset lift positions
-		int liftStartingPosition = Robot.liftSubsystem.getStartingPosition();
-		int liftCargoIntakePosition = Robot.liftSubsystem.getCargoIntakePosition();
-		int liftRocketCargo1Position = Robot.liftSubsystem.getRocketCargo1Position();
-		int liftRocketCargo2Position = Robot.liftSubsystem.getRocketCargo2Position();
-		int liftRocketCargo3Position = Robot.liftSubsystem.getRocketCargo3Position();
-		int liftRocketHatch1Position = Robot.liftSubsystem.getRocketHatch1Position();
-		int liftRocketHatch2Position = Robot.liftSubsystem.getRocketHatch2Position();
-		int liftRocketHatch3Position = Robot.liftSubsystem.getRocketHatch3Position();
-
-		// setup variables to hold the preset wrist positions
-		int wristStartingPosition = Robot.wristSubsystem.getStartingPosition();
-		int wristCargoIntakePosition = Robot.wristSubsystem.getCargoIntakePosition();
-		int wristRocketCargo1Position = Robot.wristSubsystem.getRocketCargo1Position();
-		int wristRocketCargo2Position = Robot.wristSubsystem.getRocketCargo2Position();
-		int wristRocketCargo3Position = Robot.wristSubsystem.getRocketCargo3Position();
-		int wristRocketHatch1Position = Robot.wristSubsystem.getRocketHatch1Position();
-		int wristRocketHatch2Position = Robot.wristSubsystem.getRocketHatch2Position();
-		int wristRocketHatch3Position = Robot.wristSubsystem.getRocketHatch3Position();
-
 		// pass the position variables on the 6 side buttons to the LiftSetPosition Command
-		rocketCargo1.whenPressed(new LiftSetPosition(liftRocketCargo1Position, wristRocketCargo1Position));
-		rocketCargo2.whenPressed(new LiftSetPosition(liftRocketCargo2Position, wristRocketCargo2Position));	
-		rocketCargo3.whenPressed(new LiftSetPosition(liftRocketCargo3Position, wristRocketCargo3Position));
-		rocketHatch1.whenPressed(new LiftSetPosition(liftRocketHatch1Position, wristRocketHatch1Position));
-		rocketHatch2.whenPressed(new LiftSetPosition(liftRocketHatch2Position, wristRocketHatch2Position));
-		rocketHatch3.whenPressed(new LiftSetPosition(liftRocketHatch3Position, wristRocketHatch3Position));
+		rocketCargo1.whenPressed(new LiftSetPosition(RobotState.State.CARGO_1));
+		rocketCargo2.whenPressed(new LiftSetPosition(RobotState.State.CARGO_2));	
+		rocketCargo3.whenPressed(new LiftSetPosition(RobotState.State.CARGO_3));
+		rocketHatch1.whenPressed(new LiftSetPosition(RobotState.State.HATCH_1));
+		rocketHatch2.whenPressed(new LiftSetPosition(RobotState.State.HATCH_2));
+		rocketHatch3.whenPressed(new LiftSetPosition(RobotState.State.HATCH_3));
 
 		// set the buttons at the top of the joystick to intake and home positions
-		cargoIntakePosition.whenPressed(new LiftSetPosition(liftCargoIntakePosition, wristCargoIntakePosition));
-		homePosition.whenPressed(new LiftSetPosition(liftStartingPosition, wristStartingPosition));
+		cargoIntakePosition.whenPressed(new LiftSetPosition(RobotState.State.CARGO_INTAKE));
+		homePosition.whenPressed(new LiftSetPosition(RobotState.State.HOME));
 
 		// control panel
 		hatchEject.whenPressed(new HatchEject());
-		frontJackRaise.whenPressed(new JackFrontRaise());
-		frontJackLower.whenPressed(new JackFrontLower());
+		frontJack.whenPressed(new JackFront());
+		rearJack.whenPressed(new JackRear());
 
 	}
 

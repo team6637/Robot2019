@@ -282,8 +282,7 @@ public class Lift extends Subsystem {
     if(isPositionValid(targetPosition)) {
       this.targetPosition = targetPosition;
 
-      if(tunable)
-        SmartDashboard.putNumber("Lift Target", targetPosition);
+      SmartDashboard.putNumber("Lift Target", targetPosition);
 
       return true;
     } else {
@@ -357,6 +356,7 @@ public class Lift extends Subsystem {
 
   // to tune, call this in the execute method of a command
   public void periodicLoop() {
+    SmartDashboard.putNumber("Lift Position", this.getPosition());
 
     SmartDashboard.putBoolean("Limit Test",  limitTriggered());
 
@@ -384,7 +384,6 @@ public class Lift extends Subsystem {
 
     // tune from Smart Dashboard
     if(tunable) {
-      SmartDashboard.putNumber("Lift Position", this.getPosition());
       SmartDashboard.putNumber("Lift Velocity", this.getCurrentVelocity());
       SmartDashboard.putNumber("Lift Angle", getAngle());
       SmartDashboard.putNumber("Lift Gravity Compensation", Math.cos(Math.toRadians(getAngle())));

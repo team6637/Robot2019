@@ -22,11 +22,11 @@ public class Robot extends TimedRobot {
   // Subsystem Instantiations
   public static Drive driveSubsystem = new Drive(false);
   public static Intake intakeSubsystem= new Intake(false);
-  public static Lift liftSubsystem = new Lift(true);
+  public static Lift liftSubsystem = new Lift(false);
   public static Jack jackSubsystem = new Jack();
   public static Limelight limelightSubsystem = new Limelight(true);
   public static Shifter shifterSubsystem = new Shifter();
-  public static Wrist wristSubsystem = new Wrist(true);
+  public static Wrist wristSubsystem = new Wrist(false);
 
   public static OI oi;   
 

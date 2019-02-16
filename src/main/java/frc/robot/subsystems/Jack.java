@@ -9,19 +9,18 @@ public class Jack extends Subsystem {
   public DoubleSolenoid jackFront = new DoubleSolenoid(RobotMap.jackFrontLow, RobotMap.jackFrontHigh);
   public DoubleSolenoid jackRear = new DoubleSolenoid(RobotMap.jackRearLow, RobotMap.jackRearHigh);
 
-  public boolean frontIsJacked = false;
-  public boolean rearIsJacked = false;
-
   public Jack() {
     frontLower();
   }
 
+  // raise the robot
   public void frontRaise() {
-    jackFront.set(DoubleSolenoid.Value.kForward);
+    jackFront.set(DoubleSolenoid.Value.kReverse);
   }
 
+  // lower the robot back down
   public void frontLower() {
-    jackFront.set(DoubleSolenoid.Value.kReverse);
+    jackFront.set(DoubleSolenoid.Value.kForward);
   }
 
   public void rearRaise() {
@@ -34,5 +33,6 @@ public class Jack extends Subsystem {
   
   @Override
   public void initDefaultCommand() {
+    //setDefaultCommand(new JackFront());
   }
 }

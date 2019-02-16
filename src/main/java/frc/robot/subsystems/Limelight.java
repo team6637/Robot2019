@@ -11,16 +11,15 @@ public class Limelight extends Subsystem {
 
   public boolean tunable = false;
   public NetworkTable table;
-  public int ledMode = 0;
-  public int camMode = 0;
+  public int ledMode, camMode;
 
   public Limelight(boolean tunable) {
     this.tunable = tunable;
 
     table = NetworkTableInstance.getDefault().getTable("limelight");
 
-    setLedMode(0);
-    setCameraMode(0);
+    setLedMode(1);
+    setCameraMode(1);
   }
 
 	/**
