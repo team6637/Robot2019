@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
@@ -22,7 +21,7 @@ public class Wrist extends Subsystem {
   public boolean tunable;
 
   // how far does the encoder have to travel to get from starting position to horizontal
-  private int horizontalOffset = 700;
+  private static int horizontalOffset = 700;
 
   // how many degrees has the arm traveled to get to the horizontal position from start position
   private double horizontalAngleDisplacement = 68;
@@ -56,8 +55,7 @@ public class Wrist extends Subsystem {
   public final static int slot_down = 1;
 
   // Gains
-  Gains upGains = new Gains(3, 0, 0, 0, 150, 1);
-  Gains downGains = new Gains(3, 0, 0, 0, 150, 1);
+  Gains upGains, downGains;
 
   // Motion Parameters 
   public int maxVelocityUp = 300;
@@ -65,13 +63,15 @@ public class Wrist extends Subsystem {
   public int maxVelocityDown = 300;
   public int maxAccelerationDown = 300;
 
-  public WPI_TalonSRX motor = new WPI_TalonSRX(RobotMap.wristMotorPort);
-
-  // limit switch
-  public DigitalInput limitSwitch;
+  public WPI_TalonSRX motor;
 
   public Wrist(boolean tunable) {
     this.tunable = tunable;
+
+    motor = new WPI_TalonSRX(RobotMap.wristMotorPort);
+
+    upGains = new Gains(3, 0, 0, 0, 150, 1);
+    downGains = new Gains(3, 0, 0, 0, 150, 1);
 
     // reset talons
     motor.configFactoryDefault();
@@ -83,9 +83,9 @@ public class Wrist extends Subsystem {
     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     motor.setSensorPhase(false);
     
-    motor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, RobotMap.timeoutMs);
-    motor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 10, RobotMap.timeoutMs);
-    motor.configNeutralDeadband(RobotMap.neutralDeadband, RobotMap.timeoutMs);
+    motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.timeoutMs);
+    motor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.timeoutMs);
+    motor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, RobotMap.timeoutMs);
     motor.configPeakOutputForward(+1.0, RobotMap.timeoutMs);
     motor.configPeakOutputReverse(-1.0, RobotMap.timeoutMs);
     
@@ -119,13 +119,6 @@ public class Wrist extends Subsystem {
     // set encoder and set point to starting position
     resetPosition();
     setTargetPosition(getStartingPosition());
-
-    limitSwitch = new DigitalInput(RobotMap.wristLimitSwitchPort);
-  }
-
-  // LIMIT SWITCH
-  public boolean limitTriggered() {
-    return limitSwitch.get();
   }
 
   // ENCODER
@@ -150,13 +143,7 @@ public class Wrist extends Subsystem {
 
   // MANUAL CONTROL
   public void raise() {
-
-    // limit isn't working just yet
-    // if(limitTriggered()) {
-    //   stop();
-    // } else {
-      motor.set(ControlMode.PercentOutput, 1);
-    //}
+    motor.set(ControlMode.PercentOutput, 1);
   }
   public void lower() {
     motor.set(ControlMode.PercentOutput, -1);
@@ -181,7 +168,8 @@ public class Wrist extends Subsystem {
       SmartDashboard.putNumber("Wrist Motion Control Starting", Math.random());
 
     // setup gain slot, velocity and acceleration
-    manageMotion(targetPosition);
+    // since kP and accel values are the same, we don't need this
+    //manageMotion(targetPosition);
 
     // Percent to add to Closed Loop Output
     double feedForward = getFeedForward();
@@ -258,10 +246,8 @@ public class Wrist extends Subsystem {
       SmartDashboard.putNumber("Wrist Target", targetPosition);
 
       return true;
-    } else {
-      return false;
-    }
-    
+    } 
+    return false;
   }
 
   public void incrementTargetPosition(int increment) {
@@ -359,16 +345,9 @@ public class Wrist extends Subsystem {
     // tune from Smart Dashboard
     if(tunable) {
       SmartDashboard.putNumber("Wrist Velocity", this.getCurrentVelocity());
-      SmartDashboard.putBoolean("Wrist Limit Test",  limitTriggered());
       SmartDashboard.putNumber("Wrist Relative Angle", getRelativeAngle());
       SmartDashboard.putNumber("Wrist Absolute Angle", getAngle());
-      SmartDashboard.putNumber("Wrist FeedForward", getFeedForward());
-
-      // if limit switch is triggered, reset to starting position
-      if(limitTriggered()) {
-        // disable limit switch temporarily
-        //resetPosition();
-      }    
+      SmartDashboard.putNumber("Wrist FeedForward", getFeedForward()); 
   
       int sdManualIncrement = (int) SmartDashboard.getNumber("Wrist Manual Increment", manualIncrement);
       if(sdManualIncrement != manualIncrement) 

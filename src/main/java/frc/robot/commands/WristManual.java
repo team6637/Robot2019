@@ -20,10 +20,6 @@ public class WristManual extends Command {
 
   @Override
   protected void execute() {
-
-    boolean limitTriggered = Robot.wristSubsystem.limitTriggered();
-    if(limitTriggered) Robot.wristSubsystem.resetPosition();
-
     double currentPosition = Robot.wristSubsystem.getPosition();
 
     if(tunable) {

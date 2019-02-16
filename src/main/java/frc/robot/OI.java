@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.RobotState.State;
 import frc.robot.commands.HatchEject;
 import frc.robot.commands.IntakeBringIt;
 import frc.robot.commands.IntakeSendIt;

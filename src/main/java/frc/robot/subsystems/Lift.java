@@ -58,8 +58,7 @@ public class Lift extends Subsystem {
   public final static int slot_down = 1;
 
   // Gains
-  Gains upGains = new Gains(5, 0, 0, 0, 150, 1);
-  Gains downGains = new Gains(5, 0, 0, 0, 150, 1);
+  Gains upGains, downGains;
 
   // Motion Parameters 
   public int maxVelocityUp = 400;
@@ -68,16 +67,21 @@ public class Lift extends Subsystem {
   public int maxAccelerationDown = 400;
 
   // motors
-  public WPI_TalonSRX motorMaster = new WPI_TalonSRX(RobotMap.liftMasterPort);
-  public WPI_TalonSRX motorSlave = new WPI_TalonSRX(RobotMap.liftSlavePort);
+  public WPI_TalonSRX motorMaster, motorSlave;
 
   // limit switch
   public DigitalInput limitSwitch;
 
   public Lift(boolean tunable) {
 
+    upGains = new Gains(5, 0, 0, 0, 150, 1);
+    downGains = new Gains(5, 0, 0, 0, 150, 1);
+
     // pass argument from robot.java
     this.tunable = tunable;
+
+    motorMaster = new WPI_TalonSRX(RobotMap.liftMasterPort);
+    motorSlave = new WPI_TalonSRX(RobotMap.liftSlavePort);
 
     // reset talons
     motorMaster.configFactoryDefault();
@@ -87,17 +91,17 @@ public class Lift extends Subsystem {
     motorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);	
     motorMaster.setSensorPhase(false);
     motorMaster.setInverted(false);
-    motorMaster.setNeutralMode(NeutralMode.Coast);
+    motorMaster.setNeutralMode(NeutralMode.Brake);
 
     motorSlave.setInverted(true);
-    motorSlave.setNeutralMode(NeutralMode.Coast);
+    motorSlave.setNeutralMode(NeutralMode.Brake);
 
     motorSlave.follow(motorMaster);
 
-    motorMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, RobotMap.timeoutMs);
-    motorMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 10, RobotMap.timeoutMs);
-		motorMaster.configNeutralDeadband(RobotMap.neutralDeadband, RobotMap.timeoutMs);
-		motorSlave.configNeutralDeadband(RobotMap.neutralDeadband, RobotMap.timeoutMs);
+    motorMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.timeoutMs);
+    motorMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.timeoutMs);
+    motorMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, RobotMap.timeoutMs);
+
 		motorMaster.configPeakOutputForward(+1.0, RobotMap.timeoutMs);
 		motorMaster.configPeakOutputReverse(-1.0, RobotMap.timeoutMs);
 		motorSlave.configPeakOutputForward(+1.0, RobotMap.timeoutMs);
@@ -141,12 +145,6 @@ public class Lift extends Subsystem {
     resetPosition();
     setTargetPosition(getStartingPosition());
 
-    limitSwitch = new DigitalInput(RobotMap.liftLimitSwitchPort);
-  }
-
-  // LIMIT SWITCH
-  public boolean limitTriggered() {
-    return limitSwitch.get();
   }
 
   // ENCODER
@@ -179,11 +177,7 @@ public class Lift extends Subsystem {
     motorMaster.set(ControlMode.PercentOutput, .8);
   }
   public void lower() {
-    if(limitTriggered()) {
-      stop();
-    } else {
-      motorMaster.set(ControlMode.PercentOutput, .4);  
-    }
+    motorMaster.set(ControlMode.PercentOutput, .4);  
   }
   public void move(double move) {
     motorMaster.set(ControlMode.PercentOutput, move);
@@ -205,7 +199,8 @@ public class Lift extends Subsystem {
       SmartDashboard.putNumber("Motion Control Starting", Math.random());
 
     // setup gain slot, velocity and acceleration
-    manageMotion(targetPosition);
+    // since the up and down are using the same kP and accel values, we don't need to run this
+    //manageMotion(targetPosition);
 
     // Percent to add to Closed Loop Output
     double feedForward = getFeedForward();
@@ -226,6 +221,7 @@ public class Lift extends Subsystem {
     if(currentPosition < targetPosition) {
 
       // set accel and velocity for going up
+      // since this doesn't change, i'm commenting out
       motorMaster.configMotionAcceleration(maxAccelerationUp, RobotMap.timeoutMs);
       motorMaster.configMotionCruiseVelocity(maxVelocityUp, RobotMap.timeoutMs);
 
@@ -285,10 +281,8 @@ public class Lift extends Subsystem {
       SmartDashboard.putNumber("Lift Target", targetPosition);
 
       return true;
-    } else {
-      return false;
-    }
-    
+    } 
+    return false;
   }
 
   public void incrementTargetPosition(int increment) {
@@ -357,13 +351,6 @@ public class Lift extends Subsystem {
   // to tune, call this in the execute method of a command
   public void periodicLoop() {
     SmartDashboard.putNumber("Lift Position", this.getPosition());
-
-    SmartDashboard.putBoolean("Limit Test",  limitTriggered());
-
-    // if limit switch is triggered, reset to starting position
-    if(limitTriggered()) {
-      resetPosition();
-    }
 
     boolean changed = false;
 

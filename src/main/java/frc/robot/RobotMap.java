@@ -48,6 +48,6 @@ public class RobotMap {
 
   public static final int timeoutMs = 30;
   public static final int baseTrajPeriodMs = 0;
-  public static final double neutralDeadband = 0.01;
-
+  
+  public static final double driveNeutralDeadband = 0.1;
 }
