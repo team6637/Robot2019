@@ -1,6 +1,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
@@ -11,6 +13,8 @@ public class DriveManual extends Command {
 
   @Override
   protected void initialize() {
+    Robot.driveSubsystem.leftMaster.setNeutralMode(NeutralMode.Brake);
+    Robot.driveSubsystem.rightMaster.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override

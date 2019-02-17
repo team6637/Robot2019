@@ -62,6 +62,17 @@ public class Drive extends Subsystem {
 		// FOLLOW
 		rightSlave1.follow(rightMaster);
 		rightSlave2.follow(rightMaster);
+
+		// Current Limiting
+		leftMaster.configPeakCurrentLimit(RobotMap.current40AmpPeakCurrentLimit, RobotMap.timeoutMs);
+		leftMaster.configPeakCurrentDuration(RobotMap.current40AmpPeakCurrentDuration, RobotMap.timeoutMs);
+		leftMaster.configContinuousCurrentLimit(RobotMap.current40AmpContinuousCurrentLimit, RobotMap.timeoutMs);
+		leftMaster.enableCurrentLimit(true); 
+		
+		rightMaster.configPeakCurrentLimit(RobotMap.current40AmpPeakCurrentLimit, RobotMap.timeoutMs);
+		rightMaster.configPeakCurrentDuration(RobotMap.current40AmpPeakCurrentDuration, RobotMap.timeoutMs);
+		rightMaster.configContinuousCurrentLimit(RobotMap.current40AmpContinuousCurrentLimit, RobotMap.timeoutMs);
+		rightMaster.enableCurrentLimit(true); 		
 	
 		turnMultiplier = .4;
 	}

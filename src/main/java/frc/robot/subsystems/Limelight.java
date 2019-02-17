@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.commands.LimelightListen;
+import frc.robot.commands.LimelightDriverCam;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,8 +18,9 @@ public class Limelight extends Subsystem {
 
     table = NetworkTableInstance.getDefault().getTable("limelight");
 
-    setLedMode(1);
-    setCameraMode(1);
+	setPipeline(1);
+	setLedMode(1);
+	setCameraMode(1);
   }
 
 	/**
@@ -110,6 +111,6 @@ public class Limelight extends Subsystem {
 
   @Override
   public void initDefaultCommand() {
-    setDefaultCommand(new LimelightListen());
+    setDefaultCommand(new LimelightDriverCam());
   }
 }

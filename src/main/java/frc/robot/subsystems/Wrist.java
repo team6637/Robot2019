@@ -116,6 +116,12 @@ public class Wrist extends Subsystem {
     // set profile slot, this will be updated when gains need to change
     motor.selectProfileSlot(slot_down, RobotMap.pidPrimary);
 
+    // Current Limiting
+    motor.configPeakCurrentLimit(RobotMap.current30AmpPeakCurrentLimit, RobotMap.timeoutMs);
+    motor.configPeakCurrentDuration(RobotMap.current30AmpPeakCurrentDuration, RobotMap.timeoutMs);
+    motor.configContinuousCurrentLimit(RobotMap.current30AmpContinuousCurrentLimit, RobotMap.timeoutMs);
+    motor.enableCurrentLimit(true); 
+
     // set encoder and set point to starting position
     resetPosition();
     setTargetPosition(getStartingPosition());

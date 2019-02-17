@@ -9,6 +9,7 @@ import frc.robot.commands.IntakeSendIt;
 import frc.robot.commands.JackFront;
 import frc.robot.commands.JackRear;
 import frc.robot.commands.LiftSetPosition;
+import frc.robot.commands.LimelightAlignToHatch;
 
 public class OI {
 	
@@ -32,6 +33,7 @@ public class OI {
 	public Joystick controlPanel = new Joystick(1);
 
 	Button hatchEject = new JoystickButton(controlPanel, 9);
+	Button alignWithCamera = new JoystickButton(controlPanel, 10);
 	Button frontJack = new JoystickButton(controlPanel, 11);
 	Button rearJack = new JoystickButton(controlPanel, 12);
 
@@ -54,6 +56,7 @@ public class OI {
 
 		// control panel
 		hatchEject.whenPressed(new HatchEject());
+		alignWithCamera.whileHeld(new LimelightAlignToHatch());
 		frontJack.whenPressed(new JackFront());
 		rearJack.whenPressed(new JackRear());
 

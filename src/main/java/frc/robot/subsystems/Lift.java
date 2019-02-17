@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.RobotState;
+import frc.robot.RobotState.State;
 import frc.robot.commands.LiftMM;
 import frc.robot.util.Gains;
 
@@ -141,9 +143,18 @@ public class Lift extends Subsystem {
     // set profile slot, this will be updated when gains need to change
     motorMaster.selectProfileSlot(slot_up, RobotMap.pidPrimary);
 
+    // Current Limiting
+    motorMaster.configPeakCurrentLimit(RobotMap.current30AmpPeakCurrentLimit, RobotMap.timeoutMs);
+		motorMaster.configPeakCurrentDuration(RobotMap.current30AmpPeakCurrentDuration, RobotMap.timeoutMs);
+		motorMaster.configContinuousCurrentLimit(RobotMap.current30AmpContinuousCurrentLimit, RobotMap.timeoutMs);
+		motorMaster.enableCurrentLimit(true);
+    
     // set encoder and set point to starting position
     resetPosition();
     setTargetPosition(getStartingPosition());
+
+    motorMaster.setSafetyEnabled(false);
+    motorSlave.setSafetyEnabled(false);
 
   }
 
@@ -326,6 +337,11 @@ public class Lift extends Subsystem {
 
   // to tune, call this in the initialize method of a command
   public void initializer() {
+
+    resetPosition();
+    setTargetPosition(getStartingPosition());
+    RobotState.currentState = State.HOME;
+    
     if(tunable) {
       SmartDashboard.putNumber("Lift Target", getStartingPosition());
       SmartDashboard.putNumber("Lift Position", this.getPosition());

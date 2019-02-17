@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.State;
@@ -9,7 +10,6 @@ public class LiftSetPosition extends Command {
 
   int liftTargetPosition, wristTargetPosition;
 
-  State currentRobotState;
   State targetRobotState;
 
   int liftStartingPosition, liftCargoIntakePosition, liftRocketCargo1Position, liftRocketCargo2Position, 
@@ -24,7 +24,6 @@ public class LiftSetPosition extends Command {
     // we're not requiring a subsystem since this command only changes a value in it's target subsytem
     
     this.targetRobotState = targetRobotState;
-    this.currentRobotState = RobotState.currentState;
 
     // setup variables to hold the preset lift positions
 		liftStartingPosition = Robot.liftSubsystem.getStartingPosition();
@@ -45,13 +44,13 @@ public class LiftSetPosition extends Command {
 		wristRocketHatch1Position = Robot.wristSubsystem.getRocketHatch1Position();
 		wristRocketHatch2Position = Robot.wristSubsystem.getRocketHatch2Position();
     wristRocketHatch3Position = Robot.wristSubsystem.getRocketHatch3Position();
-    
-    this.isComplete = false;
-    this.isFirstMover = true;
+  
   }
 
   @Override
   protected void initialize() {
+    this.isComplete = false;
+    this.isFirstMover = true;
   }
 
   @Override
@@ -59,36 +58,24 @@ public class LiftSetPosition extends Command {
 
     switch(this.targetRobotState) {
 
-
       // to HOME
       case HOME:
 
         // moving to HOME from CARGO_INTAKE
-        if(currentRobotState == State.CARGO_INTAKE) {
+        if(RobotState.currentState.name() == "CARGO_INTAKE") {
           if(this.isFirstMover) {
             Robot.wristSubsystem.setTargetPosition(this.wristStartingPosition);
             this.isFirstMover = false;
           } else {
-            if(Robot.wristSubsystem.getPosition() > 700) {
+            if(Robot.wristSubsystem.getPosition() > 300) {
               Robot.liftSubsystem.setTargetPosition(this.liftStartingPosition);
-              this.isComplete = true;
-            }
-          }
-
-        // moving to HOME from CARGO_3 or HATCH_3
-        } else if (this.currentRobotState == State.CARGO_3 || this.currentRobotState == State.HATCH_3){
-          if(this.isFirstMover) {
-            Robot.liftSubsystem.setTargetPosition(this.liftStartingPosition);
-            this.isFirstMover = false;
-          } else {
-            if(Robot.liftSubsystem.getPosition() < 2500) {
-              Robot.wristSubsystem.setTargetPosition(this.wristStartingPosition);
               this.isComplete = true;
             }
           }
 
         // moving to HOME from all other positions
         } else {
+          SmartDashboard.putNumber("else", Math.random());
           Robot.wristSubsystem.setTargetPosition(this.wristStartingPosition);
           Robot.liftSubsystem.setTargetPosition(this.liftStartingPosition);
           this.isComplete = true;
@@ -110,12 +97,12 @@ public class LiftSetPosition extends Command {
       case CARGO_1:
 
         // moving to CARGO_1 from CARGO_INTAKE
-        if(currentRobotState == State.CARGO_INTAKE) {
+        if(RobotState.currentState.name() == "CARGO_INTAKE") {
           if(this.isFirstMover) {
             Robot.wristSubsystem.setTargetPosition(this.wristRocketCargo1Position);
             this.isFirstMover = false;
           } else {
-            if(Robot.wristSubsystem.getPosition() > 700) {
+            if(Robot.wristSubsystem.getPosition() > 300) {
               Robot.liftSubsystem.setTargetPosition(this.liftRocketCargo1Position);
               this.isComplete = true;
             }
@@ -154,12 +141,12 @@ public class LiftSetPosition extends Command {
       case HATCH_1:
 
         // moving to HATCH_1 from CARGO_INTAKE
-        if(currentRobotState == State.CARGO_INTAKE) {
+        if(RobotState.currentState.name() == "CARGO_INTAKE") {
           if(this.isFirstMover) {
             Robot.wristSubsystem.setTargetPosition(this.wristRocketHatch1Position);
             this.isFirstMover = false;
           } else {
-            if(Robot.wristSubsystem.getPosition() > 700) {
+            if(Robot.wristSubsystem.getPosition() > 300) {
               Robot.liftSubsystem.setTargetPosition(this.liftRocketHatch1Position);
               this.isComplete = true;
             }
@@ -188,8 +175,8 @@ public class LiftSetPosition extends Command {
       case HATCH_3:
 
         // moving to HATCH_3 from all positions
-        Robot.wristSubsystem.setTargetPosition(this.wristRocketHatch2Position);
-        Robot.liftSubsystem.setTargetPosition(this.liftRocketHatch2Position);
+        Robot.wristSubsystem.setTargetPosition(this.wristRocketHatch3Position);
+        Robot.liftSubsystem.setTargetPosition(this.liftRocketHatch3Position);
         this.isComplete = true;
         break;
     }
@@ -202,8 +189,8 @@ public class LiftSetPosition extends Command {
 
   @Override
   protected void end() {
-    this.currentRobotState = this.targetRobotState;
     RobotState.currentState = this.targetRobotState;
+    System.out.print(this.targetRobotState);
   }
 
   @Override

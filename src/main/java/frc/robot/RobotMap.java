@@ -34,9 +34,6 @@ public class RobotMap {
   public static final int liftLimitSwitchPort = 1;
   public static final int wristLimitSwitchPort = 2;
 
-  // LIFT VALUES
-  public static final int liftSensorUnitsPerRotation = 1440;
-
   // TALON SETTINGS
   public static final int slot0 = 0;
   public static final int slot1 = 1;
@@ -50,4 +47,17 @@ public class RobotMap {
   public static final int baseTrajPeriodMs = 0;
   
   public static final double driveNeutralDeadband = 0.1;
+
+  // LIFT SETTINGS
+  public static final int liftSensorUnitsPerRotation = 1440;
+
+  // 30AMP CURRENT LIMITS
+  public static final int current30AmpPeakCurrentLimit = 25;
+  public static final int current30AmpPeakCurrentDuration = 200;
+  public static final int current30AmpContinuousCurrentLimit = 25;
+
+  // 40AMP CURRENT LIMITS
+  public static final int current40AmpPeakCurrentLimit = 35;
+  public static final int current40AmpPeakCurrentDuration = 200;
+  public static final int current40AmpContinuousCurrentLimit = 35;
 }
