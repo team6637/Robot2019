@@ -10,24 +10,25 @@ public class Jack extends Subsystem {
   public DoubleSolenoid jackRear = new DoubleSolenoid(RobotMap.jackRearLow, RobotMap.jackRearHigh);
 
   public Jack() {
-    frontLower();
+    frontRetract();
+    rearRetract();
   }
 
   // raise the robot
   public void frontRaise() {
-    jackFront.set(DoubleSolenoid.Value.kReverse);
+    jackFront.set(DoubleSolenoid.Value.kForward);
   }
 
   // lower the robot back down
-  public void frontLower() {
-    jackFront.set(DoubleSolenoid.Value.kForward);
+  public void frontRetract() {
+    jackFront.set(DoubleSolenoid.Value.kReverse);
   }
 
   public void rearRaise() {
     jackRear.set(DoubleSolenoid.Value.kForward);
   }
 
-  public void rearLower() {
+  public void rearRetract() {
     jackRear.set(DoubleSolenoid.Value.kReverse);
   }
   

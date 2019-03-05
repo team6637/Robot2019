@@ -13,12 +13,7 @@ public class JackRear extends Command {
 
   @Override
   protected void initialize() {
-    if(jacked) {
-      Robot.jackSubsystem.rearLower();
-    } else {
-      Robot.jackSubsystem.rearRaise();
-    }
-    jacked = !jacked;
+    Robot.jackSubsystem.rearRaise();
   }
 
   @Override
@@ -32,9 +27,11 @@ public class JackRear extends Command {
 
   @Override
   protected void end() {
+    Robot.jackSubsystem.rearRetract();
   }
 
   @Override
   protected void interrupted() {
+    end();
   }
 }

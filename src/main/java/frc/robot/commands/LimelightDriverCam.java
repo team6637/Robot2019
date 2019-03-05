@@ -12,7 +12,6 @@ public class LimelightDriverCam extends Command {
   protected void initialize() {
     Robot.limelightSubsystem.setPipeline(1);
     Robot.limelightSubsystem.setCameraMode(1);
-    Robot.limelightSubsystem.setLedMode(1);
   }
 
   @Override

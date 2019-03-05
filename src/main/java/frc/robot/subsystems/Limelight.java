@@ -19,7 +19,6 @@ public class Limelight extends Subsystem {
     table = NetworkTableInstance.getDefault().getTable("limelight");
 
 	setPipeline(1);
-	setLedMode(1);
 	setCameraMode(1);
   }
 

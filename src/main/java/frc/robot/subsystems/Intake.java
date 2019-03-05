@@ -30,11 +30,11 @@ public class Intake extends Subsystem {
   }
 
   public void hatchRetract() {
-    solenoid.set(DoubleSolenoid.Value.kReverse);
+    solenoid.set(DoubleSolenoid.Value.kForward);
   }
 
   public void hatchEject() {
-    solenoid.set(DoubleSolenoid.Value.kForward);
+    solenoid.set(DoubleSolenoid.Value.kReverse);
   }
 
   public void stop() {

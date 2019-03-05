@@ -9,7 +9,7 @@ import frc.robot.commands.IntakeSendIt;
 import frc.robot.commands.JackFront;
 import frc.robot.commands.JackRear;
 import frc.robot.commands.LiftSetPosition;
-import frc.robot.commands.LimelightAlignToHatch;
+import frc.robot.commands.LimelightAutoAlign;
 
 public class OI {
 	
@@ -26,16 +26,19 @@ public class OI {
 	Button cargoIntakePosition = new JoystickButton(stick, 4);
 	Button homePosition = new JoystickButton(stick, 3);
 
+	Button alignWithCamera = new JoystickButton(stick, 5);
+
 	Button intakeBringIt = new JoystickButton(stick, 2);
 	Button intakeSendIt = new JoystickButton(stick, 1);
 
 	// setup the control panel
 	public Joystick controlPanel = new Joystick(1);
 
-	Button hatchEject = new JoystickButton(controlPanel, 9);
-	Button alignWithCamera = new JoystickButton(controlPanel, 10);
-	Button frontJack = new JoystickButton(controlPanel, 11);
-	Button rearJack = new JoystickButton(controlPanel, 12);
+	Button frontJackButton = new JoystickButton(controlPanel, 10);
+	Button rearJackButton = new JoystickButton(controlPanel, 9);
+
+	//Button rearJackLower = new JoystickButton(controlPanel, 11);
+	Button hatchEjectButton = new JoystickButton(controlPanel, 12);
 
 	public OI() {
 		// joystick
@@ -54,11 +57,12 @@ public class OI {
 		cargoIntakePosition.whenPressed(new LiftSetPosition(RobotState.State.CARGO_INTAKE));
 		homePosition.whenPressed(new LiftSetPosition(RobotState.State.HOME));
 
+		hatchEjectButton.whenPressed(new HatchEject());
+		alignWithCamera.whileHeld(new LimelightAutoAlign());
+
 		// control panel
-		hatchEject.whenPressed(new HatchEject());
-		alignWithCamera.whileHeld(new LimelightAlignToHatch());
-		frontJack.whenPressed(new JackFront());
-		rearJack.whenPressed(new JackRear());
+		frontJackButton.whileHeld(new JackFront());
+		rearJackButton.whileHeld(new JackRear());
 
 	}
 

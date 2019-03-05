@@ -32,14 +32,14 @@ public class Lift extends Subsystem {
 
   // setup predefined setpoints
   private int startingPosition = 0;
-  private int cargoIntakePosition = 1680;
+  private int cargoIntakePosition = 1560;
   private int cargoBayPosition = 1969;
-  private int rocketCargo1Position = 0;
-  private int rocketCargo2Position = 2760;
-  private int rocketCargo3Position = 4500;
-  private int rocketHatch1Position = 0;
-  private int rocketHatch2Position = 2638;
-  private int rocketHatch3Position = 5167;
+  private int rocketCargo1Position = 11;
+  private int rocketCargo2Position = 3060;
+  private int rocketCargo3Position = 5106;
+  private int rocketHatch1Position = 14;
+  private int rocketHatch2Position = 2703;
+  private int rocketHatch3Position = 5162;
   
 
   // starting position
@@ -152,6 +152,7 @@ public class Lift extends Subsystem {
     // set encoder and set point to starting position
     resetPosition();
     setTargetPosition(getStartingPosition());
+    RobotState.currentState = State.HOME;
 
     motorMaster.setSafetyEnabled(false);
     motorSlave.setSafetyEnabled(false);
@@ -338,9 +339,9 @@ public class Lift extends Subsystem {
   // to tune, call this in the initialize method of a command
   public void initializer() {
 
-    resetPosition();
-    setTargetPosition(getStartingPosition());
-    RobotState.currentState = State.HOME;
+    // resetPosition();
+    // setTargetPosition(getStartingPosition());
+    // RobotState.currentState = State.HOME;
     
     if(tunable) {
       SmartDashboard.putNumber("Lift Target", getStartingPosition());

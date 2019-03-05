@@ -10,7 +10,7 @@ public class JackFrontLower extends Command {
 
   @Override
   protected void initialize() {
-    Robot.jackSubsystem.frontLower();
+    Robot.jackSubsystem.frontRetract();
 
   }
 

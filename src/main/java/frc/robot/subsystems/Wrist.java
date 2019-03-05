@@ -2,7 +2,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
@@ -31,14 +30,14 @@ public class Wrist extends Subsystem {
 
   // setup predefined setpoints
   private int startingPosition = 2000;
-  private int cargoIntakePosition = 0;
+  private int cargoIntakePosition = 115;
   private int cargoBayPosition = 1000;
-  private int rocketCargo1Position = 1330;
-  private int rocketCargo2Position = 834;
-  private int rocketCargo3Position = 600;
-  private int rocketHatch1Position = 1518;
-  private int rocketHatch2Position = 1057;
-  private int rocketHatch3Position = 340;
+  private int rocketCargo1Position = 1299;
+  private int rocketCargo2Position = 586;
+  private int rocketCargo3Position = 242;
+  private int rocketHatch1Position = 1417;
+  private int rocketHatch2Position = 865;
+  private int rocketHatch3Position = 325;
 
   private int targetPosition = startingPosition;
   private int lastExecutedPosition;
@@ -178,10 +177,12 @@ public class Wrist extends Subsystem {
     //manageMotion(targetPosition);
 
     // Percent to add to Closed Loop Output
-    double feedForward = getFeedForward();
+    //double feedForward = getFeedForward();
+    // temporarily disable feed forward until PID is tuned
+    //double feedForward = 0;
 
     // Do It!!!
-		motor.set(ControlMode.MotionMagic, targetPosition, DemandType.ArbitraryFeedForward, feedForward);
+		motor.set(ControlMode.MotionMagic, targetPosition);
 
     // keep track so we know when targetPosition has changed (in periodic method)
     lastExecutedPosition = targetPosition;
@@ -298,17 +299,14 @@ public class Wrist extends Subsystem {
     // set feedforward to 0 in home position so we aren't giving the motor voltage when it's just sitting there
     if(getRelativeAngle() > 115)
       feedForward = 0;
-
-    // temporarily disable feed forward until PID is tuned
-    feedForward = 0;
     
     return feedForward;
   }
 
   public void initializer() {
 
-    resetPosition();
-    setTargetPosition(getStartingPosition());
+    //resetPosition();
+    //setTargetPosition(getStartingPosition());
 
     if(tunable) {
       SmartDashboard.putNumber("Wrist Target", getStartingPosition());
@@ -341,10 +339,10 @@ public class Wrist extends Subsystem {
     // check for manual control
     double manualControlStick = Robot.oi.controlPanel.getX();
     if(manualControlStick == 1) {
-      incrementTargetPosition(-manualIncrement);
+      incrementTargetPosition(manualIncrement);
       changed = true;
     } else if (manualControlStick == -1) {
-      incrementTargetPosition(manualIncrement);
+      incrementTargetPosition(-manualIncrement);
       changed = true;
     }
 

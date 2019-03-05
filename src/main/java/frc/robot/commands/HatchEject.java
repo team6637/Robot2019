@@ -23,7 +23,7 @@ public class HatchEject extends Command {
   @Override
   protected void execute() {
           
-    if(count > 50) {
+    if(count > 100) {
       Robot.intakeSubsystem.hatchRetract();
       this.retracted = true;
     }

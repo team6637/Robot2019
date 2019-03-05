@@ -6,19 +6,14 @@ import frc.robot.Robot;
 public class JackFront extends Command {
 
   public static boolean jacked = false;
-
+  
   public JackFront() {
     requires(Robot.jackSubsystem);
   }
 
   @Override
   protected void initialize() {    
-    if(jacked) {
-      Robot.jackSubsystem.frontLower();
-    } else {
-      Robot.jackSubsystem.frontRaise();
-    }
-    jacked = !jacked;
+    Robot.jackSubsystem.frontRaise();
   }
 
   @Override
@@ -32,9 +27,11 @@ public class JackFront extends Command {
 
   @Override
   protected void end() {
+    Robot.jackSubsystem.frontRetract();
   }
 
   @Override
   protected void interrupted() {
+    end();
   }
 }
