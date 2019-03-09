@@ -32,14 +32,14 @@ public class Lift extends Subsystem {
 
   // setup predefined setpoints
   private int startingPosition = 0;
-  private int cargoIntakePosition = 1560;
-  private int cargoBayPosition = 1969;
-  private int rocketCargo1Position = 11;
-  private int rocketCargo2Position = 3060;
-  private int rocketCargo3Position = 5106;
-  private int rocketHatch1Position = 14;
-  private int rocketHatch2Position = 2703;
-  private int rocketHatch3Position = 5162;
+  private int cargoIntakePosition = 1733;
+  private int cargoBayPosition = 1411;
+  private int rocketCargo1Position = 0;
+  private int rocketCargo2Position = 3216;
+  private int rocketCargo3Position = 5158;
+  private int rocketHatch1Position = 1031;
+  private int rocketHatch2Position = 3291;
+  private int rocketHatch3Position = 5164;
   
 
   // starting position

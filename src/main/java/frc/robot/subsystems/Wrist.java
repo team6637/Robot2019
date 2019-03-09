@@ -30,14 +30,14 @@ public class Wrist extends Subsystem {
 
   // setup predefined setpoints
   private int startingPosition = 2000;
-  private int cargoIntakePosition = 115;
-  private int cargoBayPosition = 1000;
-  private int rocketCargo1Position = 1299;
-  private int rocketCargo2Position = 586;
-  private int rocketCargo3Position = 242;
-  private int rocketHatch1Position = 1417;
-  private int rocketHatch2Position = 865;
-  private int rocketHatch3Position = 325;
+  private int cargoIntakePosition = 55;
+  private int cargoBayPosition = 1195;
+  private int rocketCargo1Position = 1318;
+  private int rocketCargo2Position = 550;
+  private int rocketCargo3Position = 262;
+  private int rocketHatch1Position = 1152;
+  private int rocketHatch2Position = 663;
+  private int rocketHatch3Position = 350;
 
   private int targetPosition = startingPosition;
   private int lastExecutedPosition;

@@ -9,12 +9,12 @@ import frc.robot.RobotState;
 
 public class LimelightAutoAlign extends Command {
 
-  public double kPMove_hatch = .23;
+  public double kPMove_hatch = .26;
   public double kPTurn_hatch = .06;
-  public double targetArea_hatch = 3.1;
+  public double targetArea_hatch = 2.659;
   public double maxSpeed = .6;
 
-  public double kPTurn_cargo = .06;
+  public double kPTurn_cargo = .07;
   public double targetArea_cargo = 3;
 
   public LimelightAutoAlign() {
@@ -25,7 +25,7 @@ public class LimelightAutoAlign extends Command {
     SmartDashboard.putNumber("Camera Turn kP", kPTurn_hatch);
     SmartDashboard.putNumber("Camera maxSpeed", maxSpeed);
   
-    SmartDashboard.putNumber("Camera Turn kP", kPTurn_cargo);
+    SmartDashboard.putNumber("Camera Turn kP for Cargo", kPTurn_cargo);
   }
 
   @Override
@@ -67,6 +67,8 @@ public class LimelightAutoAlign extends Command {
         double move = -Robot.oi.stick.getY();
         Robot.driveSubsystem.manualDrive(move, turnAlign);
 
+        Robot.intakeSubsystem.bringIt();
+
       } else {
 
         maxSpeed = SmartDashboard.getNumber("Camera maxSpeed", maxSpeed);
@@ -101,9 +103,11 @@ public class LimelightAutoAlign extends Command {
 
   @Override
   protected void end() {
+    Robot.intakeSubsystem.stop();
   }
 
   @Override
   protected void interrupted() {
+    end();
   }
 }

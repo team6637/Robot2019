@@ -12,10 +12,10 @@ public class LiftSetPosition extends Command {
 
   State targetRobotState;
 
-  int liftStartingPosition, liftCargoIntakePosition, liftRocketCargo1Position, liftRocketCargo2Position, 
+  int liftStartingPosition, liftCargoIntakePosition, liftCargoBayPosition, liftRocketCargo1Position, liftRocketCargo2Position, 
     liftRocketCargo3Position, liftRocketHatch1Position, liftRocketHatch2Position, liftRocketHatch3Position;
 
-  int wristStartingPosition, wristCargoIntakePosition, wristRocketCargo1Position, wristRocketCargo2Position,
+  int wristStartingPosition, wristCargoIntakePosition, wristCargoBayPosition, wristRocketCargo1Position, wristRocketCargo2Position,
     wristRocketCargo3Position, wristRocketHatch1Position, wristRocketHatch2Position, wristRocketHatch3Position;
 
   boolean isComplete, isFirstMover;
@@ -27,7 +27,8 @@ public class LiftSetPosition extends Command {
 
     // setup variables to hold the preset lift positions
 		liftStartingPosition = Robot.liftSubsystem.getStartingPosition();
-		liftCargoIntakePosition = Robot.liftSubsystem.getCargoIntakePosition();
+    liftCargoIntakePosition = Robot.liftSubsystem.getCargoIntakePosition();
+    liftCargoBayPosition = Robot.liftSubsystem.getCargoBayPosition();
 		liftRocketCargo1Position = Robot.liftSubsystem.getRocketCargo1Position();
 		liftRocketCargo2Position = Robot.liftSubsystem.getRocketCargo2Position();
 		liftRocketCargo3Position = Robot.liftSubsystem.getRocketCargo3Position();
@@ -37,7 +38,8 @@ public class LiftSetPosition extends Command {
 
 		// setup variables to hold the preset wrist positions
 		wristStartingPosition = Robot.wristSubsystem.getStartingPosition();
-		wristCargoIntakePosition = Robot.wristSubsystem.getCargoIntakePosition();
+    wristCargoIntakePosition = Robot.wristSubsystem.getCargoIntakePosition();
+    wristCargoBayPosition = Robot.wristSubsystem.getCargoBayPosition();
 		wristRocketCargo1Position = Robot.wristSubsystem.getRocketCargo1Position();
 		wristRocketCargo2Position = Robot.wristSubsystem.getRocketCargo2Position();
 		wristRocketCargo3Position = Robot.wristSubsystem.getRocketCargo3Position();
@@ -91,6 +93,16 @@ public class LiftSetPosition extends Command {
         Robot.liftSubsystem.setTargetPosition(this.liftCargoIntakePosition);
         this.isComplete = true;
         break;
+
+
+      // to CARGO BAY
+      case CARGO_BAY:
+
+        // moving to CARGO_BAY
+        Robot.wristSubsystem.setTargetPosition(this.wristCargoBayPosition);
+        Robot.liftSubsystem.setTargetPosition(this.liftCargoBayPosition);
+        this.isComplete = true;
+        break;   
 
 
       // to CARGO 1

@@ -37,7 +37,7 @@ public class OI {
 	Button frontJackButton = new JoystickButton(controlPanel, 10);
 	Button rearJackButton = new JoystickButton(controlPanel, 9);
 
-	//Button rearJackLower = new JoystickButton(controlPanel, 11);
+	Button cargoBayPosition = new JoystickButton(controlPanel, 11);
 	Button hatchEjectButton = new JoystickButton(controlPanel, 12);
 
 	public OI() {
@@ -57,10 +57,11 @@ public class OI {
 		cargoIntakePosition.whenPressed(new LiftSetPosition(RobotState.State.CARGO_INTAKE));
 		homePosition.whenPressed(new LiftSetPosition(RobotState.State.HOME));
 
-		hatchEjectButton.whenPressed(new HatchEject());
 		alignWithCamera.whileHeld(new LimelightAutoAlign());
 
 		// control panel
+		hatchEjectButton.whenPressed(new HatchEject());
+		cargoBayPosition.whenPressed(new LiftSetPosition(RobotState.State.CARGO_BAY));
 		frontJackButton.whileHeld(new JackFront());
 		rearJackButton.whileHeld(new JackRear());
 

@@ -5,6 +5,7 @@ public class RobotState {
   public enum State {
     HOME,
     CARGO_INTAKE,
+    CARGO_BAY,
     CARGO_1,
     CARGO_2,
     CARGO_3,
